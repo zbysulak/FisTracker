@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "fis-tracker-333313",
+  "private_key_id": "6721d1592185e61feeb8afc57f412592cf8f247a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCcSX4IRO1d81FJ\nYCYI2w1J8sA6vNn3onKiCOcysr9kAWp0oinYvP1TqoXfesI5YN7t2H6DvMr/nXSa\nClH3rABO0zS48Sal1BG/BfelRg5n1ocxtUVFz7pnLrTxNE6qa2OAWnXqfgRruAsi\nQOvAWHXmHX1zF6TylfqF+ERdy2B8GoGEuUly+Fsci4K7xQ1z7EQ3W/7A1k7PS9KB\nqNwZZ1RDMRSNWneIZvfiPiis1yQmeB2PuQNUpG6JuC9aJbqSvMP8nHhJTvVQ7gzZ\nmW1hN7XdMpsvRr0p8VQzVf1qWvcc/oFi+b8uGFwsA8N1Tc0YnqAaYsaGAxGSbCvB\ncvK+4L4ZAgMBAAECggEACe3dX6HJbCjzkXQrVnAG9cYXZ7lB0SrKmk1zKtRntm8k\nl/O0MZHoN52OKHbrH1bD3bEzGyQucsj1Hyg9XD0wPnx1TV6ndEJMklSgZClW7EqZ\nMj5FqrwaJ/NetDL84HThexvELA6vhzcdIKL77K9yEMRE3mqyebsE5z1bp+iDi77Q\nhXzn2ohF73KaDO1laeBtFpUS7VhFB0EagDhXho2rVP28Xwn6Jfp2F2g7zhKR9cMg\n2jGNb6DU7J8bQ7jU4/qeMSBQRapdf89WDVR4R+MuKeo9/tKLx9m2rr3/j4dGOroC\nG5hSLCg+6bGRNJA8/h9dZAv6g81wisr9e+2YFfqQFQKBgQDZDS6QyRrvZimrlFot\nvhBYdXhoeeYVUheL0An+rnKbo1yD8T0/8cq6NUG3Ga0ScfvdyE5moQl+ae6/kEJj\nYiAKV1kOQRHAN1XhTfBduC8l/1VOS17NFCKyThHjDRxH+TQA02fIand1+yuvPuRs\nQWKaPVIl2zNRl2EdzTS++AoIBwKBgQC4VPDjH0rFw1fEc2JzNwGiKQI3QhbqjVNR\n/K6Zm2n/zZIJgHH+D/FZ8jKJaXR2j01r/KMOlG/NtMLn5gA91DtIWIU4Brlqf6Cf\nV0jh+dteLndDMThNOt9NiBiS8YjZW+QcPi37+z79zfKleKoWR3ZXBJjc2nGy5APt\nAOdn9k5A3wKBgHR2cz7y+YXtHnzXPFABBMpCNdpxVfiotMOrXEGQnyRN0o1lewT9\nm1awztMNbuVPzeJh4VeGHw76jkWxhT3IYALMfZd9aKXnyyf6ZvgSpRHRYJeDL5oA\nrOFZrJVU6pDf8Xxj8vMB1ZmzrOv6ZhyENQEn2BVB+dZU0KJqAlxZwSAvAoGAWg1d\nNYgnDmB1c0rvcNwRlzgzle1aprHuX6JzZiWv7kFus+elSPpe7ZNOLyVuuTEfIL9m\npYvM5xEFGyeZPJt/bsOYKZvXX3kEbnPE7mkTS3ql1xSnrcsyJn1zi+4l7hJfaZDT\nBERlLLc9cKt3ZLT60l4zk8nAPCX66QFFC9wftL8CgYEAgTkPnuCEtycL3eZtwzmP\nuFtK7d9szQ6bUXRY/REDi0NfFLpRj3BLFjfkvd47XH2B17Y6F5z2x/1XFSHjP7ve\nfTM1y+uIh94kdBJ6L5HcCWUH0qf8ULOkpPoEnSDiqpvePtazC1tByhzcRth18q4G\nkDYg/kGevINR3XgWh/dyGtQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "fis-tracker@fis-tracker-333313.iam.gserviceaccount.com",
+  "client_id": "114992831901617483834",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fis-tracker%40fis-tracker-333313.iam.gserviceaccount.com"
+}
