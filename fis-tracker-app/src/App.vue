@@ -20,9 +20,7 @@
           width="100"
         />
       </div>
-
       <v-spacer></v-spacer>
-
       <v-btn
         href="https://github.com/vuetifyjs/vuetify/releases/latest"
         target="_blank"
@@ -34,19 +32,19 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld />
+      <Home />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
+import Home from "./views/Home";
 
 export default {
   name: "App",
 
   components: {
-    HelloWorld,
+    Home
   },
 
   data: () => ({
