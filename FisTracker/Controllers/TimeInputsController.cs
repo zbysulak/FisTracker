@@ -30,14 +30,33 @@ namespace FisTracker.Controllers
 
         // GET: api/TimeInputs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TimeInput>>> GetTimeInputs(int month, int year)
+        public async Task<ActionResult<TimeSheet>> GetTimeInputs(int month, int year)
         {
             int userId = int.Parse(this.User.Claims.First(c => c.Type.Equals("userId")).Value);
             DateTime d = new DateTime(year, month, 1);
-            return await _context.TimeInputs.Where(ti =>
+            var times = await _context.TimeInputs.Where(ti =>
                 ti.UserId == userId &&
                 ti.Date >= d && ti.Date < d.AddMonths(1)
             ).OrderBy(ti => ti.Date).ToListAsync();
+            var result = new TimeSheet(new DateTime(year, month, 1), 
+                new DateTime(year, month, 1).AddMonths(1).AddDays(-1), 
+                times);
+            return result;
+        }
+
+        // GET: api/TimeInputs
+        [HttpGet("test")]
+        public async Task<ActionResult<TimeSheet>> GetTimeInputs(DateTime from, DateTime to)
+        {
+            int userId = int.Parse(this.User.Claims.First(c => c.Type.Equals("userId")).Value);
+            var times = await _context.TimeInputs.Where(ti =>
+                ti.UserId == userId &&
+                ti.Date >= from && ti.Date <= to
+            ).OrderBy(ti => ti.Date).ToListAsync();
+            var result = new TimeSheet(from,
+                to,
+                times);
+            return result;
         }
 
         // PUT: api/TimeInputs/5
@@ -194,6 +213,7 @@ namespace FisTracker.Controllers
         private void SaveParsedText(IEnumerable<EntityAnnotation> text)
         {
             var all = text.First().Description.Split("\n");
+            var userId = int.Parse(this.User.Claims.First(c => c.Type.Equals("userId")).Value);
             DateTime currentRow = DateTime.MinValue;
             var times = new List<TimeSpan>();
             foreach (var desc in all)
@@ -221,7 +241,7 @@ namespace FisTracker.Controllers
                                 break;
                         }
                         ti.Date = currentRow;
-                        ti.UserId = int.Parse(this.User.Claims.First(c => c.Type.Equals("userId")).Value);
+                        ti.UserId = userId;
                         _context.TimeInputs.Add(ti);
                         _context.SaveChanges();
                         times.Clear();
