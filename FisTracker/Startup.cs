@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,6 +34,30 @@ namespace FisTracker
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FisTracker", Version = "v1" });
             });
+
+            string mySqlConnectionStr = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<Data.AppDbContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
+            services.AddDistributedMemoryCache();
+            services.AddTransient<Data.AppDbContext>();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(10);//You can set Time
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            services.AddAuthentication("Session").AddScheme<SimpleAuthenticationOptions, SimpleAuthentication>("Session", null);
+            services.AddSingleton<AuthorizationHandler<SimpleAuthorizationRequirement>, SimpleAuthorization>();
+
+            //todo: fix policy settings
+           services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Basic", policy =>
+                {
+                    policy.AddAuthenticationSchemes("Session")
+                        .Requirements.Add(new SimpleAuthorizationRequirement());
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,10 +70,13 @@ namespace FisTracker
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FisTracker v1"));
             }
 
+            app.UseSession();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
