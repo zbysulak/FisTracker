@@ -7,18 +7,21 @@
 
         <p class="subheading font-weight-regular">Track your time easily.</p>
       </v-col>
-      
+    </v-row>
+    <v-row>
+      <Form />
     </v-row>
   </v-container>
 </template>
 
 <script>
+import Form from "../components/Form";
 
 export default {
-  name: "App",
+  name: "Home",
 
   components: {
-    
+    Form
   },
 
   data: () => ({
