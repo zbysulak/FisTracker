@@ -15,29 +15,27 @@
       </div>
       <v-spacer></v-spacer>
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        to="/login"
         target="_blank"
         text
       >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
+        <span class="mr-2">Login</span>
+        <v-icon>mdi-login</v-icon>
       </v-btn>
     </v-app-bar>
 
     <v-main>
-      <Home />
+      <router-view></router-view>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Home from "./views/Home";
 
 export default {
   name: "App",
-
   components: {
-    Home
+
   },
 
   data: () => ({
