@@ -11,13 +11,12 @@ using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using Google.Apis.Auth.OAuth2;
 
 namespace FisTracker.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
-    [ApiController]
-    public class TimeInputsController : ControllerBase
+    public class TimeInputsController : BaseController
     {
         private readonly AppDbContext _context;
         private readonly ILogger<TimeInputsController> _logger;
@@ -32,29 +31,14 @@ namespace FisTracker.Controllers
         [HttpGet]
         public async Task<ActionResult<TimeSheet>> GetTimeInputs(int month, int year)
         {
-            int userId = int.Parse(this.User.Claims.First(c => c.Type.Equals("userId")).Value);
+            _logger.LogInformation($"request for timesheet of {month}/{year} from user {this.CurrentUser.UserId}");
             DateTime d = new DateTime(year, month, 1);
             var times = await _context.TimeInputs.Where(ti =>
-                ti.UserId == userId &&
+                ti.UserId == this.CurrentUser.UserId &&
                 ti.Date >= d && ti.Date < d.AddMonths(1)
             ).OrderBy(ti => ti.Date).ToListAsync();
-            var result = new TimeSheet(new DateTime(year, month, 1), 
-                new DateTime(year, month, 1).AddMonths(1).AddDays(-1), 
-                times);
-            return result;
-        }
-
-        // GET: api/TimeInputs
-        [HttpGet("test")]
-        public async Task<ActionResult<TimeSheet>> GetTimeInputs(DateTime from, DateTime to)
-        {
-            int userId = int.Parse(this.User.Claims.First(c => c.Type.Equals("userId")).Value);
-            var times = await _context.TimeInputs.Where(ti =>
-                ti.UserId == userId &&
-                ti.Date >= from && ti.Date <= to
-            ).OrderBy(ti => ti.Date).ToListAsync();
-            var result = new TimeSheet(from,
-                to,
+            var result = new TimeSheet(new DateTime(year, month, 1),
+                new DateTime(year, month, 1).AddMonths(1).AddDays(-1),
                 times);
             return result;
         }
@@ -62,43 +46,40 @@ namespace FisTracker.Controllers
         // PUT: api/TimeInputs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTimeInput(int id, TimeInput timeInput)
+        public async Task<IActionResult> PutTimeInput(int id, TimeInputRequest timeInput)
         {
-            if (id != timeInput.Id)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(timeInput).State = EntityState.Modified;
+            var ti = _context.TimeInputs.Update(await _context.TimeInputs.FindAsync(id)).Entity;
+            if (ti == null) return NotFound(new MessageResult { IsError = true, Message = "Entity not found" });
+            //ti.Date = timeInput.Date;
+            ti.In = TimeSpan.Parse(timeInput.In);
+            ti.Out = TimeSpan.Parse(timeInput.Out);
+            ti.LunchOut = TimeSpan.Parse(timeInput.LunchOut);
+            ti.LunchIn = TimeSpan.Parse(timeInput.LunchIn);
+            ti.HomeOffice = timeInput.HomeOffice;
+            _context.SaveChanges();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TimeInputExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(ti);
         }
 
         // POST: api/TimeInputs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TimeInput>> PostTimeInput(TimeInput timeInput)
+        public async Task<ActionResult<TimeInput>> PostTimeInput(TimeInputRequest timeInput)
         {
-            _context.TimeInputs.Add(timeInput);
+            TimeInput t = new()
+            {
+                Date = timeInput.Date,
+                HomeOffice = timeInput.HomeOffice,
+                In = Helpers.ParseTimeSpan(timeInput.In, true).Value,
+                Out = Helpers.ParseTimeSpan(timeInput.Out),
+                LunchOut = Helpers.ParseTimeSpan(timeInput.LunchOut),
+                LunchIn = Helpers.ParseTimeSpan(timeInput.LunchIn)
+            };
+            _context.TimeInputs.Add(t);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTimeInput", new { id = timeInput.Id }, timeInput);
+            return Ok(t);
         }
 
         // DELETE: api/TimeInputs/5
@@ -109,6 +90,10 @@ namespace FisTracker.Controllers
             if (timeInput == null)
             {
                 return NotFound();
+            }
+            else if (timeInput.UserId != this.CurrentUser.UserId)
+            {
+                return BadRequest("not yours");
             }
 
             _context.TimeInputs.Remove(timeInput);
@@ -122,7 +107,7 @@ namespace FisTracker.Controllers
         {
             if (image.ContentType != "image/png")
             {
-                return BadRequest("wrong file type (image/png allowed)");
+                return BadRequest(new MessageResult() { Message = "wrong file type (image/png allowed)" });
             }
 
             try
@@ -131,7 +116,7 @@ namespace FisTracker.Controllers
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
                 if (image.Length > 0)
                 {
-                    var fileName = $"image_{this.User.Claims.First(c => c.Type == "userId").Value}_{DateTime.Now.ToString("ddMMyyyyHHmmss")}.png";
+                    var fileName = $"image_{this.CurrentUser.UserId}_{DateTime.Now.ToString("ddMMyyyyHHmmss")}.png";
                     var fullPath = Path.Combine(pathToSave, fileName);
                     var dbPath = Path.Combine(folderName, fileName);
                     using (var stream = new FileStream(fullPath, FileMode.Create))
@@ -143,16 +128,17 @@ namespace FisTracker.Controllers
 
                     SaveParsedText(text);
 
-                    return Ok(new MessageResult() { Message = "image saved" });
+                    return Ok(new MessageResult() { Message = "Image saved" });
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest(new MessageResult() { Message = "Request does not contain image" });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex}");
+                this._logger.LogError("Failed to process image", ex);
+                return StatusCode(500, new MessageResult() { Message = "Failed to process image" });
             }
 
         }
@@ -213,7 +199,6 @@ namespace FisTracker.Controllers
         private void SaveParsedText(IEnumerable<EntityAnnotation> text)
         {
             var all = text.First().Description.Split("\n");
-            var userId = int.Parse(this.User.Claims.First(c => c.Type.Equals("userId")).Value);
             DateTime currentRow = DateTime.MinValue;
             var times = new List<TimeSpan>();
             foreach (var desc in all)
@@ -241,7 +226,7 @@ namespace FisTracker.Controllers
                                 break;
                         }
                         ti.Date = currentRow;
-                        ti.UserId = userId;
+                        ti.UserId = this.CurrentUser.UserId;
                         _context.TimeInputs.Add(ti);
                         _context.SaveChanges();
                         times.Clear();
@@ -319,15 +304,14 @@ namespace FisTracker.Controllers
 
         private IReadOnlyList<EntityAnnotation> GetImageText(string path)
         {
-            // using Google credentials from environment variable
             Google.Cloud.Vision.V1.Image image1 = Google.Cloud.Vision.V1.Image.FromFile(path);
-            ImageAnnotatorClient client = ImageAnnotatorClient.Create();
+            // using Google credentials from environment variable
+            /* ImageAnnotatorClient client = ImageAnnotatorClient.Create();*/
 
             // Explicitly use service account credentials by specifying the private key file.
-            /*var credential = GoogleCredential.FromFile("client_secret_1076643029146-8jd4hna3iigl09bbj4no6ppt56j7diqg.apps.googleusercontent.com.json");
             var builder = new ImageAnnotatorClientBuilder();
-            builder.CredentialsPath = "client_secret_1076643029146-8jd4hna3iigl09bbj4no6ppt56j7diqg.apps.googleusercontent.com.json";
-            ImageAnnotatorClient client = builder.Build();*/
+            builder.CredentialsPath = "fis-tracker-333313-6721d1592185.json";
+            ImageAnnotatorClient client = builder.Build();
 
             IReadOnlyList<EntityAnnotation> textAnnotations = client.DetectText(image1);
             /*foreach (EntityAnnotation text in textAnnotations)

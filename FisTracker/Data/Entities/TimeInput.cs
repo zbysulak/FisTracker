@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FisTracker.Data
 {
+    [Table("timeinputs")]
     public class TimeInput
     {
         [Required]

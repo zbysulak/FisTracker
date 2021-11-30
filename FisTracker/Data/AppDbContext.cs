@@ -16,7 +16,11 @@ namespace FisTracker.Data
                 .HasOne(p => p.User)
                 .WithMany();
 
-            modelBuilder.Entity<User>().HasMany(u => u.TimeInputs).WithOne();
+            modelBuilder.Entity<User>(e =>
+            {
+                e.HasMany(u => u.TimeInputs).WithOne();
+                e.HasIndex(p => p.Name).IsUnique();
+            });
 
             modelBuilder.Entity<Session>(e => e.Property(p => p.Id).HasMaxLength(100));
 

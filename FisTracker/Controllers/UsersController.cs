@@ -11,9 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FisTracker.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
-    [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -22,43 +20,71 @@ namespace FisTracker.Controllers
         {
             _context = context;
         }
+
         [AllowAnonymous]
-        [HttpPost("register")]
-        public ActionResult<User> Register(RegisterRequest r)
+        [HttpPost("Register")]
+        public ActionResult<LoginResult> Register(RegisterRequest r)
         {
-            var newUser = _context.Users.Add(new Data.User()
+            _context.Users.Add(new Data.User()
             {
                 Name = r.Name,
                 Password = Crypto.HashPassword(r.Password)
             });
             _context.SaveChanges();
-            return Ok(newUser.Entity);
+
+            return ProcessLogin(new LoginRequest { Name = r.Name, Password = r.Password });
         }
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public ActionResult<User> Login(LoginRequest r)
+
+        private ActionResult<LoginResult> ProcessLogin(LoginRequest r)
         {
+
             var user = _context.Users.FirstOrDefaultAsync(u => u.Name == r.Name).Result;
             if (user == null)
             {
-                return Unauthorized("User not found");
+                return Unauthorized(new MessageResult { Message = "User not found", IsError = true });
             }
             if (!Crypto.VerifyHashedPassword(user.Password, r.Password))
             {
-                return Unauthorized("Wrong password");
+                return Unauthorized(new MessageResult { Message = "Wrong password", IsError = true });
             }
             var sessionId = this.HttpContext.Session.Id;
-            this.HttpContext.Session.SetString("init", "1");
-            _context.Sessions.Add(new Session()
+            var savedSession = _context.Sessions.Find(sessionId);
+            this.HttpContext.Session.Set("persist-session", new byte[] { 1 });
+            if (savedSession != null)
             {
-                State = SesstionState.Valid,
-                UserId = user.Id,
-                ValidTo = DateTime.Now.AddHours(1),
-                Id = this.HttpContext.Session.Id
-            });
+                savedSession.UserId = user.Id;
+                savedSession.State = SessionState.Valid;
+                savedSession.ValidTo = DateTime.Now.AddHours(1);
+            }
+            else
+            {
+                _context.Sessions.Add(new Session()
+                {
+                    State = SessionState.Valid,
+                    UserId = user.Id,
+                    ValidTo = DateTime.Now.AddHours(1),
+                    Id = this.HttpContext.Session.Id
+                });
+            }
             _context.SaveChanges();
-            //this.Response.Cookies.Append("sessionId", )
-            return Ok(user);
+            return Ok(new LoginResult { Name = r.Name, UserId = user.Id });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Login")]
+        public ActionResult<LoginResult> Login(LoginRequest r)
+        {
+            return ProcessLogin(r);
+        }
+
+        [HttpPost("Logout")]
+        public ActionResult<LoginResult> Logout()
+        {
+            var sessionId = this.HttpContext.Session.Id;
+            var savedSession = _context.Sessions.Find(sessionId);
+            savedSession.State = SessionState.Expired;
+            _context.SaveChanges();
+            return Ok(new MessageResult { Message = "Logged out successfully" });
         }
     }
 }

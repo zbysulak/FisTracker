@@ -24,18 +24,19 @@ namespace FisTracker
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            Logger.LogInformation($"authenticating request with session {Request.HttpContext.Session.Id}");
             var s = _context.Sessions.Find(Request.HttpContext.Session.Id);
             if (s == null)
             {
                 return Task.FromResult(AuthenticateResult.Fail("Session not found"));
             }
-            if (s.State != Data.SesstionState.Valid)
+            if (s.State != Data.SessionState.Valid)
             {
                 return Task.FromResult(AuthenticateResult.Fail("Session is not valid"));
             }
             if (s.ValidTo < DateTime.Now)
             {
-                s.State = Data.SesstionState.Expired;
+                s.State = Data.SessionState.Expired;
                 _context.SaveChanges();
                 return Task.FromResult(AuthenticateResult.Fail("Session is expired"));
             }
@@ -45,18 +46,19 @@ namespace FisTracker
             var identity = new ClaimsIdentity(claims, nameof(SimpleAuthentication));
 
             var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), this.Scheme.Name);
-            return Task.FromResult(AuthenticateResult.Success(ticket));//Fail("jen to zkousim"));// 
+            return Task.FromResult(AuthenticateResult.Success(ticket));
 
         }
 
         protected override Task HandleForbiddenAsync(AuthenticationProperties properties)
         {
-            return base.HandleForbiddenAsync(properties);
+            throw new UnauthorizedAccessException("Forbidden error");
         }
 
         protected override Task HandleChallengeAsync(AuthenticationProperties properties)
         {
             return base.HandleChallengeAsync(properties);
+            //throw new UnauthorizedAccessException("Challenge error");
         }
 
 

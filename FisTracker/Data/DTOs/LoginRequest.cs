@@ -1,6 +1,6 @@
-﻿namespace FisTracker.Controllers
+﻿namespace FisTracker.Data
 {
-    public class RegisterRequest
+    public class LoginRequest
     {
         public string Name { get; set; }
         public string Password { get; set; }

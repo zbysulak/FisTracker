@@ -14,12 +14,7 @@ namespace FisTracker
     {
         private Data.AppDbContext _context;
 
-        public SimpleAuthorization() : base() { }/* IServiceProvider sp) : base() { //Data.AppDbContext context) :base(){
-            using (var scope = sp.CreateScope()) // this will use `IServiceScopeFactory` internally
-            {
-                _context = scope.ServiceProvider.GetService<Data.AppDbContext>();
-            }
-        }*/
+        public SimpleAuthorization() : base() { }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SimpleAuthorizationRequirement requirement)
         {
@@ -31,11 +26,11 @@ namespace FisTracker
             if (ses == null) {
                 throw new System.Exception("Session not found");
             }
-            if (ses.State != Data.SesstionState.Valid) {
+            if (ses.State != Data.SessionState.Valid) {
                 throw new System.Exception("Session is not valid");
             }
             if (ses.ValidTo < System.DateTime.Now) {
-                ses.State = Data.SesstionState.Expired;
+                ses.State = Data.SessionState.Expired;
                 _context.SaveChanges();
                 throw new System.Exception("Session is expired");
             }*/
