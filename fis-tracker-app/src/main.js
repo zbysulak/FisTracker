@@ -7,6 +7,11 @@ import config from "./config"
 Vue.config.productionTip = false
 Vue.prototype.appConfig = config
 
+Vue.filter("formatDate", function(date){
+  let d = new Date(date)
+  return d.toLocaleDateString()
+})
+
 new Vue({
   vuetify,
   router,
