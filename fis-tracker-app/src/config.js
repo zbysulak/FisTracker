@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === "production") {
   }
 } else {
   config = {
-    apiUrl: "https://localhost:5100/api",
+    apiUrl: "http://localhost:5100/api",
     timeoutDuration: 1000
   }
 }
