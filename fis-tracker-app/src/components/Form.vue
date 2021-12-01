@@ -58,8 +58,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
+import { validationMixin } from "vuelidate"
+import { required } from "vuelidate/lib/validators"
 
 export default {
   name: "Form",
@@ -71,7 +71,7 @@ export default {
   validations: {
     date: { required },
     timeFrom: { required },
-    timeTo: { required },
+    timeTo: { required }
   },
 
   data: () => ({
@@ -82,46 +82,46 @@ export default {
       .substr(0, 10),
     menu: false,
     modal: false,
-    menu2: false,
+    menu2: false
   }),
 
   computed: {
     dateError() {
-      const errors = [];
+      const errors = []
 
-      if (!this.$v.date.$dirty) return errors;
-      !this.$v.date.required && errors.push("Date is required.");
+      if (!this.$v.date.$dirty) return errors
+      !this.$v.date.required && errors.push("Date is required.")
 
-      return errors;
+      return errors
     },
 
     timeFromError() {
-      const errors = [];
-      if (!this.$v.timeFrom.$dirty) return errors;
-      !this.$v.timeFrom.required && errors.push("Time is required.");
+      const errors = []
+      if (!this.$v.timeFrom.$dirty) return errors
+      !this.$v.timeFrom.required && errors.push("Time is required.")
 
-      return errors;
+      return errors
     },
 
     timeToError() {
-      const errors = [];
-      if (!this.$v.timeTo.$dirty) return errors;
-      !this.$v.timeTo.required && errors.push("Time is required.");
+      const errors = []
+      if (!this.$v.timeTo.$dirty) return errors
+      !this.$v.timeTo.required && errors.push("Time is required.")
 
-      return errors;
-    },
+      return errors
+    }
   },
 
   methods: {
     submit() {
-      this.$v.$touch();
+      this.$v.$touch()
     },
     clear() {
-      this.$v.$reset();
-      this.date = "";
-      this.timeFrom = "";
-      this.timeTo = "";
-    },
-  },
-};
+      this.$v.$reset()
+      this.date = ""
+      this.timeFrom = ""
+      this.timeTo = ""
+    }
+  }
+}
 </script>
