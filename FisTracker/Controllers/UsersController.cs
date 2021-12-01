@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace FisTracker.Controllers
 {
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
         private readonly AppDbContext _context;
 
