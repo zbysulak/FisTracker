@@ -166,6 +166,8 @@ export default {
     },
 
     login: async function () {
+      this.nameError
+      this.passError
       console.log(this.name + " " + this.password)
       const auth = { name: this.name, password: this.password }
       const url = this.appConfig.apiUrl + "/Users/login"
