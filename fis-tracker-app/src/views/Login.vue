@@ -27,20 +27,21 @@
             @input="$v.password.$touch()"
             @blur="$v.password.$touch()"
             class="mr-4"
-          ></v-text-field>        
+          ></v-text-field>
         </v-row>
         <v-row>
           <v-btn class="mr-4" @click="login"> Login </v-btn>
-          </v-row>
+        </v-row>
       </form>
+      <v-btn class="mr-4" @click="authTest"> Auth test </v-btn>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
-import axios from 'axios';
+import { validationMixin } from "vuelidate"
+import { required } from "vuelidate/lib/validators"
+import axios from "axios"
 
 export default {
   name: "Login",
@@ -51,7 +52,7 @@ export default {
 
   validations: {
     name: { required },
-    password: { required },
+    password: { required }
   },
 
   data: () => ({
@@ -61,47 +62,63 @@ export default {
     success: false
   }),
   computed: {
-
     nameError() {
-      const errors = [];
-      if (!this.$v.name.$dirty) return errors;
-      !this.$v.name.required && errors.push("Name is required.");
+      const errors = []
+      if (!this.$v.name.$dirty) return errors
+      !this.$v.name.required && errors.push("Name is required.")
 
-      return errors;
+      return errors
     },
 
     passError() {
-      const errors = [];
-      if (!this.$v.password.$dirty) return errors;
-      !this.$v.password.required && errors.push("Password is required.");
+      const errors = []
+      if (!this.$v.password.$dirty) return errors
+      !this.$v.password.required && errors.push("Password is required.")
 
-      return errors;
-    },
+      return errors
+    }
   },
 
   methods: {
     submit() {
-        this.$v.$touch();
+      this.$v.$touch()
     },
 
-    login: async function() {
-        console.log(this.name + " " + this.password)
-        const auth = { name: this.name, password: this.password };
-        const url = 'https://192.168.1.242:5100/api/Users/login';
-        this.success = false;
-        this.error = null;
+    authTest: async function () {
+      const url = this.appConfig.apiUrl + "/Test/Auth"
+      this.success = false
+      this.error = null
 
-        try {
-            const res = await axios.post(url, auth
-        ).then(res => res.data);
-            this.success = true;
-            console.log(res)
-        } catch (err) {
-            this.error = err.message;
-            console.log(this.error)
-        }
+      try {
+        const res = await axios
+          .get(url, { withCredentials: true })
+          .then((res) => res.data)
+        this.success = true
+        console.log(res)
+      } catch (err) {
+        this.error = err.message
+        console.log(this.error)
       }
-    
-  },
-};
+    },
+
+    login: async function () {
+      console.log(this.name + " " + this.password)
+      const auth = { name: this.name, password: this.password }
+      const url = this.appConfig.apiUrl + "/Users/login"
+      this.success = false
+      this.error = null
+
+      try {
+        const res = await axios
+          .post(url, auth, { withCredentials: true })
+          .then((res) => res.data)
+        this.success = true
+        console.log(res)
+      } catch (err) {
+        this.error = err.message
+        console.log(this.error)
+      }
+    }
+  }
+}
 </script>

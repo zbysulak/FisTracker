@@ -14,7 +14,7 @@
       <div class="example-btn">
         <v-btn class="mr-4">
           <FileUpload
-            post-action="https://192.168.1.242:5100/api/TimeInputs/parseimage"
+            :post-action="fileUploadUrl"
             extensions="gif,jpg,jpeg,png,webp"
             accept="image/png,image/gif,image/jpeg,image/webp"
             :multiple="true"
@@ -56,30 +56,31 @@
 </style>
 
 <script>
-import FileUpload from "vue-upload-component";
+import FileUpload from "vue-upload-component"
 export default {
   name: "UploadImage",
 
   components: {
-    FileUpload,
+    FileUpload
   },
 
   data() {
     return {
-      files: [],
-    };
+      fileUploadUrl: this.appConfig.apiUrl + "/TimeInputs/parseimage",
+      files: []
+    }
   },
 
   methods: {
     onPaste(e) {
-      console.log(e);
-      let dataTransfer = e.clipboardData;
+      console.log(e)
+      let dataTransfer = e.clipboardData
       if (!dataTransfer) {
-        return;
+        return
       }
-      this.$refs.upload.addDataTransfer(dataTransfer);
-      console.log(dataTransfer);
-    },
-  },
-};
+      this.$refs.upload.addDataTransfer(dataTransfer)
+      console.log(dataTransfer)
+    }
+  }
+}
 </script>
