@@ -9,6 +9,13 @@
     </v-row>
     <v-row>
       <v-col cols="12" md="6">
+        <!--<single-time-input
+          v-for="(input, index) in timeInputs"
+          v-bind:item="item"
+          v-bind:index="index"
+          v-bind:key="input.id"
+        />-->
+        <single-time-input v-bind:item="timeInputs[0]" />
         <Form />
       </v-col>
       <v-col cols="12" md="6">
@@ -25,6 +32,7 @@
 <script>
 import Form from "../components/Form"
 import RightPanel from "../components/RightPanel"
+import SingleTimeInput from "../components/SingleTimeInput.vue"
 import UploadImage from "../components/UploadImage"
 
 export default {
@@ -33,12 +41,12 @@ export default {
   components: {
     Form,
     RightPanel,
-    UploadImage
+    UploadImage,
+    SingleTimeInput
   },
 
-  data: () =>
-    UploadImage({
-      //
-    })
+  data: () => ({
+    timeInputs: [{ id: "1", date: "2021-11-11", in: "11:00", out: "12:00" }]
+  })
 }
 </script>
