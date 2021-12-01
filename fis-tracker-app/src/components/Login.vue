@@ -181,6 +181,7 @@ export default {
         this.success = true
         this.dialog = false
         this.snackbar = true
+        this.$store.commit("TEST");
         console.log(res)
       } catch (err) {
         this.error = err.message
