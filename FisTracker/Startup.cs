@@ -40,7 +40,7 @@ namespace FisTracker
                 options.AddPolicy(name: "fck-cors",
                     builder =>
                     {
-                        builder.WithOrigins("https://localhost:8081").AllowAnyHeader().AllowAnyMethod();
+                        builder.WithOrigins("https://localhost:8081", "http://localhost:8081").AllowAnyHeader().AllowAnyMethod();
                     });
             });
 
@@ -83,7 +83,7 @@ namespace FisTracker
 
             app.UseSession();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

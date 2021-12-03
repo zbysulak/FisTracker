@@ -43,43 +43,43 @@ namespace FisTracker.Controllers
             return result;
         }
 
-        // PUT: api/TimeInputs/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTimeInput(int id, TimeInputRequest timeInput)
-        {
-
-            var ti = _context.TimeInputs.Update(await _context.TimeInputs.FindAsync(id)).Entity;
-            if (ti == null) return NotFound(new MessageResult { IsError = true, Message = "Entity not found" });
-            //ti.Date = timeInput.Date;
-            ti.In = TimeSpan.Parse(timeInput.In);
-            ti.Out = TimeSpan.Parse(timeInput.Out);
-            ti.LunchOut = TimeSpan.Parse(timeInput.LunchOut);
-            ti.LunchIn = TimeSpan.Parse(timeInput.LunchIn);
-            ti.HomeOffice = timeInput.HomeOffice;
-            _context.SaveChanges();
-
-            return Ok(ti);
-        }
-
         // POST: api/TimeInputs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// checks if provided time input exists. Is it does, it is updated. New entry created otherwise.
+        /// </summary>
+        /// <param name="timeInput"></param>
+        /// <returns>new/updated timeinput</returns>
         [HttpPost]
         public async Task<ActionResult<TimeInput>> PostTimeInput(TimeInputRequest timeInput)
         {
-            TimeInput t = new()
+            var ti = _context.TimeInputs.Find(timeInput.Date, this.CurrentUser.UserId);
+            if (ti == null)
             {
-                Date = timeInput.Date,
-                HomeOffice = timeInput.HomeOffice,
-                In = Helpers.ParseTimeSpan(timeInput.In, true).Value,
-                Out = Helpers.ParseTimeSpan(timeInput.Out),
-                LunchOut = Helpers.ParseTimeSpan(timeInput.LunchOut),
-                LunchIn = Helpers.ParseTimeSpan(timeInput.LunchIn)
-            };
-            _context.TimeInputs.Add(t);
+                ti = new()
+                {
+                    Date = timeInput.Date,
+                    UserId = this.CurrentUser.UserId,
+                    HomeOffice = timeInput.HomeOffice,
+                    In = Helpers.ParseTimeSpan(timeInput.In, true).Value,
+                    Out = Helpers.ParseTimeSpan(timeInput.Out),
+                    LunchOut = Helpers.ParseTimeSpan(timeInput.LunchOut),
+                    LunchIn = Helpers.ParseTimeSpan(timeInput.LunchIn)
+                };
+                _context.TimeInputs.Add(ti);
+            }
+            else
+            {
+                ti.HomeOffice = timeInput.HomeOffice;
+                ti.In = Helpers.ParseTimeSpan(timeInput.In);
+                ti.Out = Helpers.ParseTimeSpan(timeInput.Out);
+                ti.LunchOut = Helpers.ParseTimeSpan(timeInput.LunchOut);
+                ti.LunchIn = Helpers.ParseTimeSpan(timeInput.LunchIn);
+            }
+
             await _context.SaveChangesAsync();
 
-            return Ok(t);
+            return Ok(new TimeInputResponse(ti));
         }
 
         // DELETE: api/TimeInputs/5
@@ -142,6 +142,8 @@ namespace FisTracker.Controllers
             }
 
         }
+
+        #region private methods
 
         private bool CheckDate(DayOfWeek actual, string expected)
         {
@@ -320,10 +322,6 @@ namespace FisTracker.Controllers
             }*/
             return textAnnotations;
         }
-
-        private bool TimeInputExists(int id)
-        {
-            return _context.TimeInputs.Any(e => e.Id == id);
-        }
+        #endregion
     }
 }
