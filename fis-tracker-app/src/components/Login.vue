@@ -1,42 +1,32 @@
 <template>
-
-    <v-row class="pr-4" justify="end">
-    <v-dialog
-      v-model="dialog"
-      persistent
-      max-width="600px"
-    >
+  <v-row class="pr-4" justify="end">
+    <v-dialog v-model="dialog" persistent max-width="600px">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="white"
-          outlined
-          v-bind="attrs"
-          v-on="on"
-        >
+        <v-btn color="white" outlined v-bind="attrs" v-on="on">
           Login
           <v-icon>mdi-login</v-icon>
         </v-btn>
       </template>
       <v-card>
-        <v-card-title>
-          <span class="text-h5">Login</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
+        <v-form @submit.prevent="login">
+          <v-card-title>
+            <span class="text-h5">Login</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
                     v-model="name"
                     :error-messages="nameError"
                     label="Name"
                     required
                     @input="$v.name.$touch()"
                     @blur="$v.name.$touch()"
-                    class="mr-4"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
+                    class="mr-4"></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
                     v-model="password"
                     :error-messages="passError"
                     label="Password"
@@ -44,51 +34,30 @@
                     required
                     @input="$v.password.$touch()"
                     @blur="$v.password.$touch()"
-                    class="mr-4"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-          <small>*indicates required field</small>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="black darken-1"
-            text
-             @click="dialog = false"
-          >
-            Close
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-             @click="authTest"
-          >
-            Auth test
-          </v-btn>
-          <v-btn
-            color="primary"
-            @click="login"
-          >
-            Log in
-          </v-btn>
-        </v-card-actions>
+                    class="mr-4"></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>*indicates required field</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="black darken-1" text @click="dialog = false">
+              Close
+            </v-btn>
+            <v-btn color="blue darken-1" text @click="authTest">
+              Auth test
+            </v-btn>
+            <v-btn color="primary" type="submit"> Log in </v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
-    <v-snackbar
-      v-model="snackbar"
-      :timeout="timeout"
-    >
+    <v-snackbar v-model="snackbar" :timeout="timeout">
       {{ text }}
 
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="blue"
-          text
-          v-bind="attrs"
-          @click="snackbar = false"
-        >
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
           Close
         </v-btn>
       </template>
@@ -115,11 +84,11 @@ export default {
 
   data: () => ({
     snackbar: false,
-    text: 'Successfully log in.',
+    text: "Successfully log in.",
     timeout: 2000,
     dialog: false,
-    name: "",
-    password: "",
+    name: process.env.NODE_ENV === "production" ? "" : "Martin",
+    password: process.env.NODE_ENV === "production" ? "" : "Martin",
     error: null,
     success: false
   }),
@@ -181,7 +150,8 @@ export default {
         this.success = true
         this.dialog = false
         this.snackbar = true
-        this.$store.commit("TEST");
+        this.$store.commit("TEST")
+        console.log("JUCHUUU")
         console.log(res)
       } catch (err) {
         this.error = err.message

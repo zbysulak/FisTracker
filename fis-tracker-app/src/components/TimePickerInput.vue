@@ -1,33 +1,54 @@
 <template>
   <div>
-    <v-text-field v-model="time"
-      ><template v-slot:append>
-        <v-dialog>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" v-bind="attrs" v-on="on" icon>
-              <v-icon>mdi-timer-outline</v-icon>
-            </v-btn>
-          </template>
-          <template v-slot:default="dialog">
-            <v-card>
-              <v-card-text class="pa-0"
-                ><v-time-picker v-model="time" format="24hr"></v-time-picker>
-              </v-card-text>
-              <v-card-actions class="justify-end">
-                <v-btn text @click="dialog.value = false">Close</v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
+    <v-menu
+      ref="menu"
+      v-model="picker"
+      :close-on-content-click="false"
+      :nudge-right="40"
+      :return-value.sync="time"
+      transition="scale-transition"
+      offset-y
+      max-width="290px"
+      min-width="290px">
+      <template v-slot:activator="{ on, attrs }">
+        <v-text-field
+          v-model="time"
+          label="Picker in menu"
+          prepend-icon="mdi-clock-time-four-outline"
+          readonly
+          v-bind="attrs"
+          v-on="on"></v-text-field>
       </template>
-    </v-text-field>
+      <v-time-picker
+        v-if="picker"
+        v-model="time"
+        full-width
+        format="24hr"
+        v-on:input="$emit('input', time)"
+        @click:minute="$refs.menu.save(time)"></v-time-picker>
+    </v-menu>
   </div>
 </template>
 <script>
 export default {
-  props: ["time"],
+  props: {
+    label: { type: String, default: "Time" },
+    value: { type: String },
+    clearable: { type: Boolean, default: false }
+  },
   data: () => ({
-    timepicker: false
-  })
+    picker: false,
+    time: ""
+  }),
+  watch: {
+    value(val, old) {
+      console.log("time updated", val, old)
+      this.time = val
+    }
+  },
+  mounted: function () {
+    console.log("timeinput mounted", this.value)
+    this.time = this.value
+  }
 }
 </script>

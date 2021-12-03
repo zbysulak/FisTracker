@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <v-row class="text-center">
-
       <v-col class="mb-4">
         <h1 class="display-2 font-weight-bold mb-3">Welcome</h1>
 
@@ -9,12 +8,12 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" md="6">
-        <Form />
+      <v-col md="9">
+        <time-sheet></time-sheet>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col md="3">
         <RightPanel />
-      </v-col>   
+      </v-col>
     </v-row>
     <v-divider class="mt-12 mb-12"></v-divider>
     <v-row class="text-center">
@@ -24,17 +23,17 @@
 </template>
 
 <script>
-import Form from "../components/Form";
-import RightPanel from "../components/RightPanel";
-import UploadImage from '../components/UploadImage';
-
+import RightPanel from "../components/RightPanel"
+import TimeSheet from "../components/TimeSheet.vue"
+import UploadImage from "../components/UploadImage"
 
 export default {
   name: "Home",
 
   components: {
-    Form,
-    RightPanel, UploadImage
+    RightPanel,
+    UploadImage,
+    TimeSheet
   },
 
   data: () => ({
@@ -43,13 +42,12 @@ export default {
 
   watch: {
     "$store.state.count": {
-      handler: function(nv) {
-        console.log(nv);
+      handler: function (nv) {
+        console.log(nv)
         // neco proved
       },
       immediate: true // provides initial (not changed yet) state
     }
-  },
-
-};
+  }
+}
 </script>
