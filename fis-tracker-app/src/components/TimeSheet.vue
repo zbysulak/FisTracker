@@ -79,13 +79,15 @@
         <v-btn color="primary" @click="initialize"> Reset </v-btn>
       </template>
     </v-data-table>
+    <z-image-upload/>
   </div>
 </template>
 <script>
 import axios from "axios"
 import TimeEditDialog from "./TimeEditDialog.vue"
+import ZImageUpload from './ZImageUpload.vue'
 export default {
-  components: { TimeEditDialog },
+  components: { TimeEditDialog, ZImageUpload },
   data: () => ({
     test: "ahoj",
     time: "8:00",

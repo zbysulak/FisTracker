@@ -124,9 +124,9 @@ namespace FisTracker.Controllers
                         image.CopyTo(stream);
                     }
 
-                    var text = GetImageText(fullPath);
+                    //var text = GetImageText(fullPath);
 
-                    SaveParsedText(text);
+                    //SaveParsedText(text);
 
                     return Ok(new MessageResult() { Message = "Image saved" });
                 }
