@@ -13,11 +13,12 @@
       <template v-slot:activator="{ on, attrs }">
         <v-text-field
           v-model="time"
-          label="Picker in menu"
+          :label="label"
           prepend-icon="mdi-clock-time-four-outline"
           readonly
           v-bind="attrs"
-          v-on="on"></v-text-field>
+          v-on="on"
+          :clearable="clearable"></v-text-field>
       </template>
       <v-time-picker
         v-if="picker"
