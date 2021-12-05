@@ -17,7 +17,7 @@
             :post-action="fileUploadUrl"
             extensions="gif,jpg,jpeg,png,webp"
             accept="image/png,image/gif,image/jpeg,image/webp"
-            :multiple="true"
+            :multiple="false"
             :size="1024 * 1024 * 10"
             v-model="files"
             ref="upload"

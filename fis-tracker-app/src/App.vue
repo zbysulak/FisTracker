@@ -14,23 +14,31 @@
         <span class="font-weight-bold">FisTracker</span>
       </div>
       <v-spacer></v-spacer>
+      <div>
+      <settings />
       <Login />
+      </div>
     </v-app-bar>
-
     <v-main>
       <router-view></router-view>
     </v-main>
+    <snack ref="snack"/>
   </v-app>
 </template>
 
 <script>
 import Login from './components/Login'
+import Settings from './components/Settings.vue'
+import Snack from './components/Snack.vue'
 export default {
   name: "App",
-  components: {Login},
+  components: {Login, Settings, Snack},
 
   data: () => ({
     //
-  })
+  }),
+  mounted() {
+    this.$root.snack = this.$refs.snack
+  },
 }
 </script>
