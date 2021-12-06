@@ -1,93 +1,109 @@
 <template>
-  <div>
-    <v-menu
-      ref="menu"
-      v-model="menu"
-      :close-on-content-click="false"
-      :return-value.sync="date"
-      transition="scale-transition"
-      offset-y
-      max-width="290px"
-      min-width="auto">
-      <template v-slot:activator="{ on, attrs }">
-        <v-text-field
-          v-model="date"
-          label="Picker in menu"
-          prepend-icon="mdi-calendar"
-          readonly
-          v-bind="attrs"
-          v-on="on"></v-text-field>
-      </template>
-      <v-date-picker v-model="date" type="month" no-title scrollable>
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-        <v-btn text color="primary" @click="$refs.menu.save(date)"> OK </v-btn>
-      </v-date-picker>
-    </v-menu>
-    <v-data-table
-      :headers="headers"
-      :items="timeInputs"
-      sort-by="calories"
-      class="elevation-1"
-      :hide-default-footer="true"
-      :item-class="workDayStyle">
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-spacer></v-spacer>
-          <time-edit-dialog
-            v-model="editedItem"
-            v-on:saved="updateTable"></time-edit-dialog>
-          <v-dialog v-model="dialogDelete" max-width="500px">
-            <v-card>
-              <v-card-title class="text-h5">
-                Are you sure you want to delete this item?</v-card-title
-              >
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDelete"
-                  >Cancel</v-btn
-                >
-                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                  >OK</v-btn
-                >
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-toolbar>
-      </template>
-      <template v-slot:[`item.date`]="{ item }">
-        {{ item.date | formatDate }}
-      </template>
-      <template v-slot:[`item.homeOffice`]="{ item }">
-        <v-chip
-          v-if="item.homeOffice"
-          class="ma-2"
-          color="green"
-          text-color="white">
-          JO!
-        </v-chip>
-        <v-chip v-else class="ma-2" color="orange" text-color="white">
-          NE :(
-        </v-chip>
-      </template>
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-      </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize"> Reset </v-btn>
-      </template>
-    </v-data-table>
-    <z-image-upload/>
-  </div>
+  <v-row>
+    <v-row>
+      <v-col>
+        <v-menu
+          ref="menu"
+          v-model="menu"
+          :close-on-content-click="false"
+          :return-value.sync="date"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="date"
+              label="Select month"
+              prepend-icon="mdi-calendar"
+              readonly
+              v-bind="attrs"
+              v-on="on"></v-text-field>
+          </template>
+          <v-date-picker v-model="date" type="month" no-title scrollable>
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
+            <v-btn text color="primary" @click="$refs.menu.save(date)">
+              OK
+            </v-btn>
+          </v-date-picker>
+        </v-menu>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-data-table
+          :headers="headers"
+          :items="timeInputs"
+          sort-by="calories"
+          class="elevation-1"
+          :hide-default-footer="true"
+          :item-class="workDayStyle">
+          <template v-slot:top>
+            <v-toolbar flat>
+              <v-spacer></v-spacer>
+              <time-edit-dialog
+                v-model="editedItem"
+                v-on:saved="updateTable"></time-edit-dialog>
+              <v-dialog v-model="dialogDelete" max-width="500px">
+                <v-card>
+                  <v-card-title class="text-h5">
+                    Are you sure you want to delete this item?</v-card-title
+                  >
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="closeDelete"
+                      >Cancel</v-btn
+                    >
+                    <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                      >OK</v-btn
+                    >
+                    <v-spacer></v-spacer>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-toolbar>
+          </template>
+          <template v-slot:[`item.date`]="{ item }">
+            {{ item.date | formatDate }}
+          </template>
+          <template v-slot:[`item.homeOffice`]="{ item }">
+            <v-chip
+              v-if="item.homeOffice"
+              class="ma-2"
+              color="green"
+              text-color="white">
+              JO!
+            </v-chip>
+            <v-chip v-else class="ma-2" color="orange" text-color="white">
+              NE :(
+            </v-chip>
+          </template>
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-icon small class="mr-2" @click="editItem(item)">
+              mdi-pencil
+            </v-icon>
+            <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+          </template>
+          <template v-slot:no-data>
+            <v-btn color="primary" @click="initialize"> Reset </v-btn>
+          </template>
+        </v-data-table>
+      </v-col>
+      <v-col>
+        <z-image-upload />
+        <right-panel></right-panel>
+      </v-col>
+    </v-row>
+  </v-row>
 </template>
 <script>
 import axios from "axios"
+import RightPanel from "./RightPanel.vue"
 import TimeEditDialog from "./TimeEditDialog.vue"
-import ZImageUpload from './ZImageUpload.vue'
+import ZImageUpload from "./ZImageUpload.vue"
 export default {
-  components: { TimeEditDialog, ZImageUpload },
+  components: { TimeEditDialog, ZImageUpload, RightPanel },
   data: () => ({
     test: "ahoj",
     time: "8:00",

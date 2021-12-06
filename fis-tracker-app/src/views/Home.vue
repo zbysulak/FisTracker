@@ -8,31 +8,20 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col md="9">
+      <v-col md="12">
         <time-sheet></time-sheet>
       </v-col>
-      <v-col md="3">
-        <RightPanel />
-      </v-col>
-    </v-row>
-    <v-divider class="mt-12 mb-12"></v-divider>
-    <v-row class="text-center">
-      <UploadImage />
     </v-row>
   </v-container>
 </template>
 
 <script>
-import RightPanel from "../components/RightPanel"
 import TimeSheet from "../components/TimeSheet.vue"
-import UploadImage from "../components/UploadImage"
 
 export default {
   name: "Home",
 
   components: {
-    RightPanel,
-    UploadImage,
     TimeSheet
   },
 
