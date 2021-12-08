@@ -20,22 +20,19 @@
             :multiple="false"
             :size="1024 * 1024 * 10"
             v-model="files"
-            ref="upload"
-          >
+            ref="upload">
             Select files
           </FileUpload>
         </v-btn>
         <v-btn
           v-if="!$refs.upload || !$refs.upload.active"
-          @click.prevent="$refs.upload.active = true"
-        >
+          @click.prevent="$refs.upload.active = true">
           Start Upload
         </v-btn>
         <v-btn
           color="error"
           v-else
-          @click.prevent="$refs.upload.active = false"
-        >
+          @click.prevent="$refs.upload.active = false">
           Stop Upload
         </v-btn>
       </div>
@@ -73,13 +70,11 @@ export default {
 
   methods: {
     onPaste(e) {
-      console.log(e)
       let dataTransfer = e.clipboardData
       if (!dataTransfer) {
         return
       }
       this.$refs.upload.addDataTransfer(dataTransfer)
-      console.log(dataTransfer)
     }
   }
 }

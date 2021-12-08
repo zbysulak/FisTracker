@@ -42,13 +42,11 @@ export default {
     time: ""
   }),
   watch: {
-    value(val, old) {
-      console.log("time updated", val, old)
+    value(val) {
       this.time = val
     }
   },
   mounted: function () {
-    console.log("timeinput mounted", this.value)
     this.time = this.value
   }
 }

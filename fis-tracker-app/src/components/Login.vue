@@ -53,18 +53,9 @@
         </v-form>
       </v-card>
     </v-dialog>
-    <template v-else>
-      <v-btn
-        @click="logout"
-        class="mr-10"
-        color="white"
-        outlined
-        v-bind="attrs"
-        v-on="on">
-        Log out
-        <v-icon>mdi-login</v-icon>
-      </v-btn>
-    </template>
+    <v-btn v-else @click="logout" class="mr-10" color="white" outlined Log out>
+      Logout<v-icon>mdi-logout</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -88,16 +79,14 @@ export default {
   data: () => ({
     dialog: false,
     name: process.env.NODE_ENV === "production" ? "" : "Martin",
-    password: process.env.NODE_ENV === "production" ? "" : "Martin",
+    password: process.env.NODE_ENV === "production" ? "" : "Martin$1",
     error: null,
     success: false,
-    isLogged: false,
-    token: ""
+    isLogged: false
   }),
   watch: {
     "$store.state.user": {
       handler: function () {
-        console.log("STORE USER: ", this.$store.state.user)
         if (!this.$store.state.user.token) {
           this.isLogged = false
         } else {
@@ -127,18 +116,11 @@ export default {
 
   methods: {
     logout() {
-      axios
-        .post(
-          this.appConfig.apiUrl + "/Users/Logout",
-          {},
-          { withCredentials: true }
-        )
-        .then(() => {
-          this.$store.user = {}
-          this.$root.snack.show({ message: "Successfully logout!" })
-        })
+      axios.post(this.appConfig.apiUrl + "/Users/Logout", {}).then(() => {
+        this.$store.state.user = {}
+        this.$root.snack.show({ message: "Successfully logout!" })
+      })
     },
-
     submit() {
       this.$v.$touch()
     },
@@ -147,12 +129,6 @@ export default {
       const url = this.appConfig.apiUrl + "/Test/Auth"
       this.success = false
       this.error = null
-      /*fetch(url, {
-        method: "get",
-        credentials: "include"
-      })
-        .then((a) => a.text())
-        .then(console.log)*/
       axios
         .get(url, { headers: { Authorization: this.token } })
         .then((res) => {
@@ -160,47 +136,24 @@ export default {
         })
         .catch((err) => {
           this.error = err.message
-          console.log(this.error)
         })
-      this.success = true
-      this.dialog = false
     },
 
     login() {
-      this.nameError
-      this.passError
-      console.log(this.name + " " + this.password)
       const auth = { name: this.name, password: this.password }
       const url = this.appConfig.apiUrl + "/Users/Login"
       this.success = false
       this.error = null
-      /*
-      fetch(url, {
-        method: "post",
-        credentials: "include",
-        body: JSON.stringify(auth),
-        //mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-        .then((a) => a.json())
-        .then(console.log)*/
-
       axios
         .post(url, auth)
         .then((res) => {
           this.success = true
           this.dialog = false
-          this.snackbar = true
           this.$store.state.user = res.data
-          this.token = res.data.token
-          console.log("JUCHUUU")
-          console.log(res.data)
+          window.localStorage.token = res.data.token
         })
         .catch((err) => {
           this.error = err.message
-          console.log(this.error)
         })
     }
   }

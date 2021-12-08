@@ -55,11 +55,10 @@
         </v-data-table>
       </v-col>
       <v-col cols="4">
-        <right-panel></right-panel>
+        <right-panel :time="time"></right-panel>
       </v-col>
       <v-col>
         <z-image-upload />
-        <right-panel :time="time"></right-panel>
       </v-col>
     </v-row>
     <v-overlay :value="overlay">
@@ -124,14 +123,12 @@ export default {
 
   methods: {
     monthChange(a) {
-      console.log("month changed to", a)
       this.loadTable(a)
     },
     updateTable() {
       this.loadTable(this.date)
     },
     loadTable(yearMonth) {
-      console.log("huh?")
       const m = yearMonth.split("-")
       const year = m[0]
       const month = m[1]
@@ -147,7 +144,6 @@ export default {
           }
         )
         .then((d) => {
-          console.log(d)
           this.timeInputs = d.data.timeInputs
           this.time = d.data
         })
@@ -171,7 +167,6 @@ export default {
     editItem(item) {
       this.editedIndex = this.timeInputs.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      console.log(this.editedItem)
       this.dialog = true
     },
     closeDelete() {

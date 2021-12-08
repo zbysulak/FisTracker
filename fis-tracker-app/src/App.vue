@@ -31,7 +31,6 @@ import Settings from "./components/Settings.vue"
 import Snack from "./components/Snack.vue"
 import axios from "axios"
 
-axios.defaults.withCredentials = true
 export default {
   name: "App",
   components: { Login, Settings, Snack },
@@ -39,8 +38,20 @@ export default {
   data: () => ({
     //
   }),
+  beforeCreate() {
+    const t = window.localStorage.token
+    this.$store.state.user = { token: t }
+  },
   mounted() {
     this.$root.snack = this.$refs.snack
+  },
+  watch: {
+    "$store.state.user": {
+      handler: function () {
+        axios.defaults.headers = { Authorization: this.$store.state.user.token }
+      },
+      immediate: true // provides initial (not changed yet) state
+    }
   }
 }
 </script>
