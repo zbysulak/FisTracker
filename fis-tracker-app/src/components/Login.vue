@@ -97,10 +97,11 @@ export default {
   watch: {
     "$store.state.user": {
       handler: function () {
-        if (this.$store.state.user !== null) {
-          this.isLogged = true
-        } else {
+        console.log("STORE USER: ", this.$store.state.user)
+        if (!this.$store.state.user.token) {
           this.isLogged = false
+        } else {
+          this.isLogged = true
         }
       },
       immediate: true // provides initial (not changed yet) state
@@ -192,7 +193,7 @@ export default {
           this.success = true
           this.dialog = false
           this.snackbar = true
-          //this.$store.user = res
+          this.$store.state.user = res.data
           this.token = res.data.token
           console.log("JUCHUUU")
           console.log(res.data)
