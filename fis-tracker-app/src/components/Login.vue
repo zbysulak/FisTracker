@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" persistent max-width="600px">
+    <v-dialog v-if="!isLogged" v-model="dialog" persistent max-width="600px">
       <template v-slot:activator="{ on, attrs }">
         <v-btn class="mr-10" color="white" outlined v-bind="attrs" v-on="on">
           Login
@@ -53,6 +53,12 @@
         </v-form>
       </v-card>
     </v-dialog>
+    <template v-else>
+        <v-btn @click="logout" class="mr-10" color="white" outlined v-bind="attrs" v-on="on">
+          Log out
+          <v-icon>mdi-login</v-icon>
+        </v-btn>
+      </template>
     <v-snackbar v-model="snackbar" :timeout="timeout">
       {{ text }}
 
@@ -90,8 +96,17 @@ export default {
     name: process.env.NODE_ENV === "production" ? "" : "Martin",
     password: process.env.NODE_ENV === "production" ? "" : "Martin",
     error: null,
-    success: false
+    success: false,
+    isLogged: false
   }),
+  watch: {
+    "$store.state.user": {
+      handler: function() {
+        this.isLogged = true;
+      },
+      immediate: true // provides initial (not changed yet) state
+    }
+  },
   computed: {
     nameError() {
       const errors = []
@@ -111,6 +126,16 @@ export default {
   },
 
   methods: {
+
+    logout() {
+        axios
+          .get(this.appConfig.apiUrl + "/User/logout")
+          .then(() => (
+            this.$root.snack.show({message:"Successfully logout!"})
+            )
+          )
+    },
+
     submit() {
       this.$v.$touch()
     },
@@ -150,7 +175,7 @@ export default {
         this.success = true
         this.dialog = false
         this.snackbar = true
-        this.$store.commit("TEST")
+        this.$store.user = res
         console.log("JUCHUUU")
         console.log(res)
       } catch (err) {
