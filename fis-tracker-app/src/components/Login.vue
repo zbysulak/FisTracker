@@ -91,7 +91,8 @@ export default {
     password: process.env.NODE_ENV === "production" ? "" : "Martin",
     error: null,
     success: false,
-    isLogged: false
+    isLogged: false,
+    token: ""
   }),
   watch: {
     "$store.state.user": {
@@ -151,9 +152,8 @@ export default {
       })
         .then((a) => a.text())
         .then(console.log)*/
-
       axios
-        .get(url)
+        .get(url, { headers: { Authorization: this.token } })
         .then((res) => {
           console.log("result", res.data)
         })
@@ -192,7 +192,8 @@ export default {
           this.success = true
           this.dialog = false
           this.snackbar = true
-          this.$store.user = res
+          //this.$store.user = res
+          this.token = res.data.token
           console.log("JUCHUUU")
           console.log(res.data)
         })
