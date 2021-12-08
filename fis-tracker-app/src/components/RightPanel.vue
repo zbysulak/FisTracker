@@ -1,14 +1,15 @@
 <template>
   <v-container>
     <v-row>
-      <v-col class="mb-4">
-        <p>
-          <span class="subheading mr-4">Month: </span>
-          <span class="mr-4">160</span><span class="mr-4"> hours</span>
+      <v-col class="mb-2">
+        <h4 class="mb-4">Overview</h4>
+        <p class="mb-1">
+          <span class="subheading mr-1">Month: </span>
+          <b>160</b><span> hours</span>
         </p>
-        <p>
-          <span class="subheading mr-4">Hours Left: </span>
-          <span class="mr-4">120</span>
+        <p class="mb-1">
+          <span class="subheading mr-1">Hours Left: </span>
+          <b>24</b>
         </p>
       </v-col>
     </v-row>
@@ -17,13 +18,15 @@
 </template>
 
 <script>
+
 export default {
   name: "RightPanel",
-
+  props: ['time'],
   components: {},
 
   data: () => ({
-    //
-  })
+    totalTime: null,
+    timeLeft: null
+  }),
 }
 </script>

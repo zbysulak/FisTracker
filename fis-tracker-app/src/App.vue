@@ -14,10 +14,10 @@
         <span class="font-weight-bold">FisTracker</span>
       </div>
       <v-spacer></v-spacer>
-      <div>
-      <settings />
-      <Login />
-      </div>
+      <v-row class="justify-end">
+        <settings />
+        <Login />
+      </v-row>
     </v-app-bar>
     <v-main>
       <router-view></router-view>

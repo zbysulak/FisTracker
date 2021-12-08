@@ -1,8 +1,8 @@
 <template>
-  <v-row class="pr-4" justify="end">
+  <div>
     <v-dialog v-model="dialog" persistent max-width="600px">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="white" outlined v-bind="attrs" v-on="on">
+        <v-btn class="mr-10" color="white" outlined v-bind="attrs" v-on="on">
           Login
           <v-icon>mdi-login</v-icon>
         </v-btn>
@@ -62,7 +62,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </v-row>
+  </div>
 </template>
 
 <script>

@@ -92,7 +92,7 @@
       </v-col>
       <v-col>
         <z-image-upload />
-        <right-panel></right-panel>
+        <right-panel :time="time"></right-panel>
       </v-col>
     </v-row>
   </v-row>
@@ -106,7 +106,6 @@ export default {
   components: { TimeEditDialog, ZImageUpload, RightPanel },
   data: () => ({
     test: "ahoj",
-    time: "8:00",
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -122,6 +121,7 @@ export default {
       { text: "Actions", value: "actions", sortable: false }
     ],
     timeInputs: [],
+    time: {}, 
     datePicker: false,
     editedIndex: -1,
     editedItem: {},
@@ -166,6 +166,7 @@ export default {
         .then((d) => {
           console.log(d)
           this.timeInputs = d.data.timeInputs
+          this.time = d.data
         })
         .catch((d) => console.error(d))
     },
