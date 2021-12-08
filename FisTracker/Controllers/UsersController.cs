@@ -67,7 +67,7 @@ namespace FisTracker.Controllers
                 });
             }
             _context.SaveChanges();
-            return Ok(new LoginResult { Name = r.Name, UserId = user.Id });
+            return Ok(new LoginResult { Name = r.Name, UserId = user.Id, Token = this.HttpContext.Session.Id });
         }
 
         [AllowAnonymous]
@@ -80,11 +80,19 @@ namespace FisTracker.Controllers
         [HttpPost("Logout")]
         public ActionResult<LoginResult> Logout()
         {
-            var sessionId = this.HttpContext.Session.Id;
-            var savedSession = _context.Sessions.Find(sessionId);
-            savedSession.State = SessionState.Expired;
-            _context.SaveChanges();
-            return Ok(new MessageResult { Message = "Logged out successfully" });
+            if (Request.Headers.TryGetValue("Authorization", out Microsoft.Extensions.Primitives.StringValues tokens))
+            {
+
+                var token = tokens[0];
+                var savedSession = _context.Sessions.Find(token);
+                savedSession.State = SessionState.Expired;
+                _context.SaveChanges();
+                return Ok(new MessageResult { Message = "Logged out successfully" });
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

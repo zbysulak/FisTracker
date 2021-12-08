@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FisTracker.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211128014610_homeoffice")]
-    partial class homeoffice
+    [Migration("20211208152911_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,41 +38,38 @@ namespace FisTracker.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("sessions");
                 });
 
             modelBuilder.Entity("FisTracker.Data.TimeInput", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("HomeOffice")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<TimeSpan>("In")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan>("LunchIn")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan>("LunchOut")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan>("Out")
-                        .HasColumnType("time(6)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<bool>("HomeOffice")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<TimeSpan?>("In")
+                        .IsRequired()
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("LunchIn")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("LunchOut")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("Out")
+                        .HasColumnType("time(6)");
+
+                    b.HasKey("Date", "UserId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TimeInputs");
+                    b.ToTable("timeinputs");
                 });
 
             modelBuilder.Entity("FisTracker.Data.User", b =>
@@ -82,14 +79,18 @@ namespace FisTracker.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(83)
+                        .HasColumnType("varchar(83)");
 
                     b.Property<string>("Password")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("FisTracker.Data.Session", b =>

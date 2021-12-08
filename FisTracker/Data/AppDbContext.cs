@@ -2,12 +2,13 @@
 
 namespace FisTracker.Data
 {
-    public class AppDbContext: DbContext
+    public class AppDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<TimeInput> TimeInputs { get; set; }
         public DbSet<Session> Sessions { get; set; }
-        public AppDbContext(DbContextOptions opts) : base(opts) { 
+        public AppDbContext(DbContextOptions opts) : base(opts)
+        {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,7 +20,6 @@ namespace FisTracker.Data
             modelBuilder.Entity<User>(e =>
             {
                 e.HasMany(u => u.TimeInputs).WithOne();
-                e.HasKey(p => p.Id);
                 e.Property(p => p.Name).HasMaxLength(83);
                 e.HasIndex(p => p.Name).IsUnique();
             });
