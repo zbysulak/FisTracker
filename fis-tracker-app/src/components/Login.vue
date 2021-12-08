@@ -141,23 +141,31 @@ export default {
       this.$v.$touch()
     },
 
-    authTest: async function () {
+    authTest() {
       const url = this.appConfig.apiUrl + "/Test/Auth"
       this.success = false
       this.error = null
+      /*fetch(url, {
+        method: "get",
+        credentials: "include"
+      })
+        .then((a) => a.text())
+        .then(console.log)*/
 
-      try {
-        const res = await axios.get(url).then((res) => res.data)
-        this.success = true
-        this.dialog = false
-        console.log(res)
-      } catch (err) {
-        this.error = err.message
-        console.log(this.error)
-      }
+      axios
+        .get(url)
+        .then((res) => {
+          console.log("result", res.data)
+        })
+        .catch((err) => {
+          this.error = err.message
+          console.log(this.error)
+        })
+      this.success = true
+      this.dialog = false
     },
 
-    login: async function () {
+    login() {
       this.nameError
       this.passError
       console.log(this.name + " " + this.password)
@@ -165,19 +173,33 @@ export default {
       const url = this.appConfig.apiUrl + "/Users/Login"
       this.success = false
       this.error = null
+      /*
+      fetch(url, {
+        method: "post",
+        credentials: "include",
+        body: JSON.stringify(auth),
+        //mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then((a) => a.json())
+        .then(console.log)*/
 
-      try {
-        const res = await axios.post(url, auth).then((res) => res.data)
-        this.success = true
-        this.dialog = false
-        this.snackbar = true
-        this.$store.user = res
-        console.log("JUCHUUU")
-        console.log(res)
-      } catch (err) {
-        this.error = err.message
-        console.log(this.error)
-      }
+      axios
+        .post(url, auth)
+        .then((res) => {
+          this.success = true
+          this.dialog = false
+          this.snackbar = true
+          this.$store.user = res
+          console.log("JUCHUUU")
+          console.log(res.data)
+        })
+        .catch((err) => {
+          this.error = err.message
+          console.log(this.error)
+        })
     }
   }
 }
