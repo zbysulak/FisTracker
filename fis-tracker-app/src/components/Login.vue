@@ -102,7 +102,13 @@ export default {
   watch: {
     "$store.state.user": {
       handler: function() {
-        this.isLogged = true;
+
+        if (this.$store.state.user !== null) {
+          this.isLogged = true;
+        } else {
+          this.isLogged = false;
+        }
+          
       },
       immediate: true // provides initial (not changed yet) state
     }
