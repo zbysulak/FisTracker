@@ -54,20 +54,17 @@
       </v-card>
     </v-dialog>
     <template v-else>
-        <v-btn @click="logout" class="mr-10" color="white" outlined v-bind="attrs" v-on="on">
-          Log out
-          <v-icon>mdi-login</v-icon>
-        </v-btn>
-      </template>
-    <v-snackbar v-model="snackbar" :timeout="timeout">
-      {{ text }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
+      <v-btn
+        @click="logout"
+        class="mr-10"
+        color="white"
+        outlined
+        v-bind="attrs"
+        v-on="on">
+        Log out
+        <v-icon>mdi-login</v-icon>
+      </v-btn>
+    </template>
   </div>
 </template>
 
@@ -89,9 +86,6 @@ export default {
   },
 
   data: () => ({
-    snackbar: false,
-    text: "Successfully log in.",
-    timeout: 2000,
     dialog: false,
     name: process.env.NODE_ENV === "production" ? "" : "Martin",
     password: process.env.NODE_ENV === "production" ? "" : "Martin",
@@ -101,14 +95,12 @@ export default {
   }),
   watch: {
     "$store.state.user": {
-      handler: function() {
-
+      handler: function () {
         if (this.$store.state.user !== null) {
-          this.isLogged = true;
+          this.isLogged = true
         } else {
-          this.isLogged = false;
+          this.isLogged = false
         }
-          
       },
       immediate: true // provides initial (not changed yet) state
     }
@@ -132,14 +124,17 @@ export default {
   },
 
   methods: {
-
     logout() {
-        axios
-          .get(this.appConfig.apiUrl + "/User/logout")
-          .then(() => (
-            this.$root.snack.show({message:"Successfully logout!"})
-            )
-          )
+      axios
+        .post(
+          this.appConfig.apiUrl + "/Users/Logout",
+          {},
+          { withCredentials: true }
+        )
+        .then(() => {
+          this.$store.user = {}
+          this.$root.snack.show({ message: "Successfully logout!" })
+        })
     },
 
     submit() {
@@ -152,12 +147,9 @@ export default {
       this.error = null
 
       try {
-        const res = await axios
-          .get(url, { withCredentials: true })
-          .then((res) => res.data)
+        const res = await axios.get(url).then((res) => res.data)
         this.success = true
         this.dialog = false
-        this.snackbar = true
         console.log(res)
       } catch (err) {
         this.error = err.message
@@ -170,14 +162,12 @@ export default {
       this.passError
       console.log(this.name + " " + this.password)
       const auth = { name: this.name, password: this.password }
-      const url = this.appConfig.apiUrl + "/Users/login"
+      const url = this.appConfig.apiUrl + "/Users/Login"
       this.success = false
       this.error = null
 
       try {
-        const res = await axios
-          .post(url, auth, { withCredentials: true })
-          .then((res) => res.data)
+        const res = await axios.post(url, auth).then((res) => res.data)
         this.success = true
         this.dialog = false
         this.snackbar = true

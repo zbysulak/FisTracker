@@ -5,11 +5,12 @@
         <h4 class="mb-4">Overview</h4>
         <p class="mb-1">
           <span class="subheading mr-1">Month: </span>
-          <b>160</b><span> hours</span>
+          <b>{{ time.totalTime.totalHours }}</b
+          ><span> hours</span>
         </p>
         <p class="mb-1">
           <span class="subheading mr-1">Hours Left: </span>
-          <b>24</b>
+          <b>{{ time.totalTime.totalHours - time.timeNeeded.totalHours }}</b>
         </p>
       </v-col>
     </v-row>
@@ -18,15 +19,14 @@
 </template>
 
 <script>
-
 export default {
   name: "RightPanel",
-  props: ['time'],
+  props: ["time"],
   components: {},
 
   data: () => ({
     totalTime: null,
     timeLeft: null
-  }),
+  })
 }
 </script>

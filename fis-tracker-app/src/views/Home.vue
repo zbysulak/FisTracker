@@ -8,7 +8,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col md="12">
+      <v-col cols="12">
         <time-sheet></time-sheet>
       </v-col>
     </v-row>

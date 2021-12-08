@@ -1,37 +1,8 @@
 <template>
-  <v-row>
+  <div>
+    <month-picker v-model="month" v-on:input="monthChange" />
     <v-row>
-      <v-col>
-        <v-menu
-          ref="menu"
-          v-model="menu"
-          :close-on-content-click="false"
-          :return-value.sync="date"
-          transition="scale-transition"
-          offset-y
-          max-width="290px"
-          min-width="auto">
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="date"
-              label="Select month"
-              prepend-icon="mdi-calendar"
-              readonly
-              v-bind="attrs"
-              v-on="on"></v-text-field>
-          </template>
-          <v-date-picker v-model="date" type="month" no-title scrollable>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-            <v-btn text color="primary" @click="$refs.menu.save(date)">
-              OK
-            </v-btn>
-          </v-date-picker>
-        </v-menu>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
+      <v-col cols="8">
         <v-data-table
           :headers="headers"
           :items="timeInputs"
@@ -68,16 +39,9 @@
             {{ item.date | formatDate }}
           </template>
           <template v-slot:[`item.homeOffice`]="{ item }">
-            <v-chip
-              v-if="item.homeOffice"
-              class="ma-2"
-              color="green"
-              text-color="white">
-              JO!
-            </v-chip>
-            <v-chip v-else class="ma-2" color="orange" text-color="white">
-              NE :(
-            </v-chip>
+            <v-icon v-if="item.homeOffice" class="text-center">
+              mdi-checkbox-marked-circle-outline
+            </v-icon>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-icon small class="mr-2" @click="editItem(item)">
@@ -90,22 +54,30 @@
           </template>
         </v-data-table>
       </v-col>
+      <v-col cols="4">
+        <right-panel></right-panel>
+      </v-col>
       <v-col>
         <z-image-upload />
         <right-panel :time="time"></right-panel>
       </v-col>
     </v-row>
-  </v-row>
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+  </div>
 </template>
 <script>
 import axios from "axios"
 import RightPanel from "./RightPanel.vue"
 import TimeEditDialog from "./TimeEditDialog.vue"
 import ZImageUpload from "./ZImageUpload.vue"
+import MonthPicker from "./MonthPicker.vue"
+
 export default {
-  components: { TimeEditDialog, ZImageUpload, RightPanel },
+  components: { TimeEditDialog, ZImageUpload, RightPanel, MonthPicker },
   data: () => ({
-    test: "ahoj",
+    month: new Date().toISOString().substring(0, 7),
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -121,7 +93,7 @@ export default {
       { text: "Actions", value: "actions", sortable: false }
     ],
     timeInputs: [],
-    time: {}, 
+    time: {},
     datePicker: false,
     editedIndex: -1,
     editedItem: {},
@@ -134,7 +106,7 @@ export default {
       homeOffice: false
     },
     date: "2021-11",
-    menu: false
+    overlay: false
   }),
 
   watch: {
@@ -151,17 +123,28 @@ export default {
   },
 
   methods: {
+    monthChange(a) {
+      console.log("month changed to", a)
+      this.loadTable(a)
+    },
     updateTable() {
-      console.log("updateTable")
+      this.loadTable(this.date)
     },
-    workDayStyle(item) {
-      return item.workDay ? "" : "grey lighten-3"
-    },
-    initialize() {
+    loadTable(yearMonth) {
+      console.log("huh?")
+      const m = yearMonth.split("-")
+      const year = m[0]
+      const month = m[1]
       axios
         .get(
-          this.appConfig.apiUrl + "/TimeInputs?month=" + 11 + "&year=" + 2021,
-          { withCredentials: true }
+          this.appConfig.apiUrl +
+            "/TimeInputs?month=" +
+            month +
+            "&year=" +
+            year,
+          {
+            withCredentials: true
+          }
         )
         .then((d) => {
           console.log(d)
@@ -170,24 +153,27 @@ export default {
         })
         .catch((d) => console.error(d))
     },
+    workDayStyle(item) {
+      return item.workDay ? "" : "grey lighten-3"
+    },
+    initialize() {
+      this.loadTable(this.month)
+    },
     deleteItem(item) {
       this.editedIndex = this.timeInputs.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialogDelete = true
     },
-
     deleteItemConfirm() {
       this.desserts.splice(this.editedIndex, 1)
       this.closeDelete()
     },
-
     editItem(item) {
       this.editedIndex = this.timeInputs.indexOf(item)
       this.editedItem = Object.assign({}, item)
       console.log(this.editedItem)
       this.dialog = true
     },
-
     closeDelete() {
       this.dialogDelete = false
       this.$nextTick(() => {

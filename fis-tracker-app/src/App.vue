@@ -8,8 +8,7 @@
           contain
           src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
           transition="scale-transition"
-          width="40"
-        />
+          width="40" />
 
         <span class="font-weight-bold">FisTracker</span>
       </div>
@@ -22,23 +21,26 @@
     <v-main>
       <router-view></router-view>
     </v-main>
-    <snack ref="snack"/>
+    <snack ref="snack" />
   </v-app>
 </template>
 
 <script>
-import Login from './components/Login'
-import Settings from './components/Settings.vue'
-import Snack from './components/Snack.vue'
+import Login from "./components/Login"
+import Settings from "./components/Settings.vue"
+import Snack from "./components/Snack.vue"
+import axios from "axios"
+
+axios.defaults.withCredentials = true
 export default {
   name: "App",
-  components: {Login, Settings, Snack},
+  components: { Login, Settings, Snack },
 
   data: () => ({
     //
   }),
   mounted() {
     this.$root.snack = this.$refs.snack
-  },
+  }
 }
 </script>
