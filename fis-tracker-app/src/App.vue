@@ -10,7 +10,7 @@
           transition="scale-transition"
           width="40" />
 
-        <span class="font-weight-bold">FisTracker</span>
+        <span class="font-weight-bold">FisTracker v1.0</span>
       </div>
       <v-spacer></v-spacer>
       <v-row class="justify-end">
@@ -49,6 +49,7 @@ export default {
           const t = window.localStorage.token
           this.$store.state.user = { token: t }
           this.isLogged = true
+          console.log("isLogged2: ", this.isLogged)
         } else {
           this.$store.state.user = { token: undefined }
           this.isLogged = false
@@ -62,12 +63,20 @@ export default {
   },
 
   mounted() {
+    console.log("isLogged1: ", this.isLogged)
     this.$root.snack = this.$refs.snack
   },
   watch: {
     "$store.state.user": {
       handler: function () {
         axios.defaults.headers = { Authorization: this.$store.state.user.token }
+
+        if(this.$store.state.user.token === undefined) {
+          this.isLogged = false
+        } else {
+          this.isLogged = true
+        }
+
       },
       immediate: true // provides initial (not changed yet) state
     }
