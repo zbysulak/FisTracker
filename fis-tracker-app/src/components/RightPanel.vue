@@ -1,4 +1,5 @@
 <template>
+  <div>
   <v-skeleton-loader
     v-if="loading"
     class="mx-auto"
@@ -22,13 +23,19 @@
       </p>
     </v-card-text>
   </v-card>
+  <v-card-title>Image upload</v-card-title>
+  <v-card>
+    <z-image-upload />
+  </v-card>
+  </div>
 </template>
 
 <script>
+import ZImageUpload from './ZImageUpload.vue'
 export default {
   name: "RightPanel",
   props: { time: { type: Object, require: true } },
-  components: {},
+  components: {ZImageUpload},
 
   computed: {
     loading() {

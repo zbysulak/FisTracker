@@ -1,9 +1,8 @@
 <template>
   <div>
-    <div class="container">
+    <div class="">
       <!--UPLOAD-->
       <form enctype="multipart/form-data" novalidate>
-        <h1>Upload images</h1>
         <div class="dropbox">
           <input type="file" multiple :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
             accept="image/*" class="input-file">

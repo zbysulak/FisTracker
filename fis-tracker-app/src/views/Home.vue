@@ -1,13 +1,13 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row class="text-center">
       <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">Welcome</h1>
+        <h1 class="display-2 font-weight-bold mb-3">Welcome, {{ userName }}</h1>
 
         <p class="subheading font-weight-regular">Track your time easily.</p>
       </v-col>
     </v-row>
-    <v-container v-if="isLogged">
+    <v-container v-if="isLogged" fluid>
       <v-col cols="12">
         <time-sheet></time-sheet>
       </v-col>
@@ -36,7 +36,8 @@ export default {
   },
 
   data: () => ({
-    isLogged: false
+    isLogged: false,
+    userName: ""
   }),
   watch: {
     "$store.state.user": {
@@ -45,15 +46,24 @@ export default {
           this.isLogged = false
         } else {
           this.isLogged = true
+          console.log(this.$store.state.user.name)
+          this.userName = this.$store.state.user.name
         }
       },
       immediate: true // provides initial (not changed yet) state
     }
+  },
+  computed: {
+    
   }
 }
 </script>
 
 <style>
+
+  .container {
+    max-width: 90%;
+  }
 
   .loginBtn .v-btn {
     border: 1px solid #1976d2 !important;

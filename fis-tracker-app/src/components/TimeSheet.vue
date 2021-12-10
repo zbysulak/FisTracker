@@ -1,6 +1,10 @@
 <template>
   <div>
-    <month-picker v-model="month" v-on:input="monthChange" />
+   <v-row>
+     <v-col cols="2">
+      <month-picker v-model="month" v-on:input="monthChange" />
+     </v-col>
+    </v-row> 
     <v-row>
       <v-col cols="8">
         <v-data-table
@@ -10,31 +14,7 @@
           class="elevation-1"
           :hide-default-footer="true"
           :item-class="workDayStyle">
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-spacer></v-spacer>
-              <time-edit-dialog
-                v-model="editedItem"
-                v-on:saved="updateTable"></time-edit-dialog>
-              <v-dialog v-model="dialogDelete" max-width="500px">
-                <v-card>
-                  <v-card-title class="text-h5">
-                    Are you sure you want to delete this item?</v-card-title
-                  >
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="closeDelete"
-                      >Cancel</v-btn
-                    >
-                    <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                      >OK</v-btn
-                    >
-                    <v-spacer></v-spacer>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-toolbar>
-          </template>
+         
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate }}
           </template>
@@ -53,13 +33,19 @@
             <v-btn color="primary" @click="initialize"> Reset </v-btn>
           </template>
         </v-data-table>
+        <div class="mt-5">
+          <v-row class="pl-3">
+            <time-edit-dialog
+              v-model="editedItem"
+              v-on:saved="updateTable">
+          </time-edit-dialog>
+          </v-row>
+        </div>
       </v-col>
       <v-col cols="4">
         <right-panel :time="time"></right-panel>
       </v-col>
-      <v-col>
-        <z-image-upload />
-      </v-col>
+      
     </v-row>
     <v-overlay :value="overlay">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -70,11 +56,10 @@
 import axios from "axios"
 import RightPanel from "./RightPanel.vue"
 import TimeEditDialog from "./TimeEditDialog.vue"
-import ZImageUpload from "./ZImageUpload.vue"
 import MonthPicker from "./MonthPicker.vue"
 
 export default {
-  components: { TimeEditDialog, ZImageUpload, RightPanel, MonthPicker },
+  components: { TimeEditDialog, RightPanel, MonthPicker },
   data: () => ({
     month: new Date().toISOString().substring(0, 7),
     dialog: false,
@@ -85,9 +70,9 @@ export default {
         value: "date"
       },
       { text: "Arrived at", value: "in.formatted" },
+      { text: "Left at", value: "out.formatted" },
       { text: "Lunch break start", value: "lunchOut.formatted" },
       { text: "Lunch break end", value: "lunchIn.formatted" },
-      { text: "Left at", value: "out.formatted" },
       { text: "Homeoffice / holiday", value: "homeOffice" },
       { text: "Actions", value: "actions", sortable: false }
     ],

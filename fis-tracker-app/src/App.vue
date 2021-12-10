@@ -41,6 +41,7 @@ export default {
 
   beforeCreate() {
     const url = this.appConfig.apiUrl + "/Users/AuthorizationCheck"
+    axios.defaults.headers = { Authorization: window.localStorage.token }
     axios
       .get(url)
       .then((res) => {
