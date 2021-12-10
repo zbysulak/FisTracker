@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col class="pt-0 pb-0" cols="2">
+      <v-col class="pt-0 pb-0" cols="3">
         <month-picker v-model="month" v-on:input="monthChange" />
       </v-col>
     </v-row>

@@ -44,6 +44,7 @@ export default {
       handler: function () {
         if (!this.$store.state.user.token) {
           this.isLogged = false
+          this.userName = ""
         } else {
           this.isLogged = true
           console.log(this.$store.state.user.name)
