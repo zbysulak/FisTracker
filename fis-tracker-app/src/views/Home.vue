@@ -4,7 +4,7 @@
       <v-col class="mb-4">
         <h1 class="display-2 font-weight-bold mb-3">Welcome, {{ userName }}</h1>
 
-        <p class="subheading font-weight-regular">Track your time easily.</p>
+        <p class="subheading font-weight-regular">Insert your time manually or upload screenshot of your attendance</p>
       </v-col>
     </v-row>
     <v-container v-if="isLogged" fluid>

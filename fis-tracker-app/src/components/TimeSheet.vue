@@ -1,12 +1,13 @@
 <template>
   <div>
    <v-row>
-     <v-col cols="2">
+     <v-col class="pt-0 pb-0" cols="2">
       <month-picker v-model="month" v-on:input="monthChange" />
      </v-col>
     </v-row> 
-    <v-row>
+    <v-row class="mt-0">
       <v-col cols="8">
+        <v-card-title>Table of attendance</v-card-title>
         <v-data-table
           :headers="headers"
           :items="timeInputs"
