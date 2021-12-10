@@ -13,13 +13,12 @@
             <span class="text-h5">Login</span>
           </v-card-title>
           <v-card-text>
-            <v-container>
               <v-row>
                 <v-col cols="12">
                   <v-text-field
                     v-model="name"
                     :error-messages="nameError"
-                    label="Name"
+                    label="Name *"
                     required
                     @input="$v.name.$touch()"
                     @blur="$v.name.$touch()"
@@ -29,7 +28,7 @@
                   <v-text-field
                     v-model="password"
                     :error-messages="passError"
-                    label="Password"
+                    label="Password *"
                     type="password"
                     required
                     @input="$v.password.$touch()"
@@ -37,12 +36,11 @@
                     class="mr-4"></v-text-field>
                 </v-col>
               </v-row>
-            </v-container>
             <small>*indicates required field</small>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="black darken-1" text @click="dialog = false">
+            <v-btn outlined color="black darken-1" text @click="dialog = false">
               Close
             </v-btn>
             <v-btn color="blue darken-1" text @click="authTest">

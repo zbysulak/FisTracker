@@ -14,7 +14,7 @@
       </div>
       <v-spacer></v-spacer>
       <v-row class="justify-end">
-        <settings />
+        <settings  v-if="isLogged"/>
         <Login />
       </v-row>
     </v-app-bar>
@@ -36,7 +36,7 @@ export default {
   components: { Login, Settings, Snack },
 
   data: () => ({
-    //
+    isLogged: false
   }),
 
   beforeCreate() {
@@ -48,8 +48,10 @@ export default {
         if(res.data.token !== undefined) {
           const t = window.localStorage.token
           this.$store.state.user = { token: t }
+          this.isLogged = true
         } else {
           this.$store.state.user = { token: undefined }
+          this.isLogged = false
           console.log("UNDEFINED TOKEN")
         }
       })

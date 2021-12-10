@@ -13,7 +13,7 @@
       </v-col>
     </v-container>
     <v-container class="text-center loginBtn" v-else> 
-      <h4>Prosím přihlaste se!</h4> 
+      <h4>Please, sign in!</h4> 
       <login />
       <p class="mt-5 mb-0">or</p>
       <register />

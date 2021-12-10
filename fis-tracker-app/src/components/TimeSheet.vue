@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
     <v-row class="mt-0">
-      <v-col cols="8">
+      <v-col cols="9">
         <v-card-title>Table of attendance</v-card-title>
         <v-data-table
           :headers="headers"
@@ -36,7 +36,7 @@
           </v-row>
         </div>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="3">
         <right-panel :time="time" :loading="loading"></right-panel>
       </v-col>
     </v-row>

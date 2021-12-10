@@ -8,30 +8,51 @@
       type="card"></v-skeleton-loader>
     <v-card v-else>
       <v-card-text>
-        <p class="mb-1">
-          <span class="subheading mr-1">Month: </span>
-          <b>{{ totalTimeInMonth }}</b>
-          <span> hours</span>
+         <p class="mb-1">
+          <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <span
+            v-bind="attrs"
+            v-on="on"
+          >Month: <b>{{ totalTimeInMonth }}</b></span>
+        </template>
+        <span>Number of hours in current month</span>
+      </v-tooltip>
         </p>
         <p class="mb-1">
-          <span class="subheading mr-1">Worked: </span>
-          <b>{{ totalTime }}</b>
+          <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <span
+            v-bind="attrs"
+            v-on="on"
+          >Worked time: <b>{{ totalTime }}</b></span>
+        </template>
+        <span>The time you spent at work</span>
+      </v-tooltip>
         </p>
         <p class="mb-1">
-          <span class="subheading mr-1">
-            Remaining time to work this month:
-          </span>
-          <b>{{ remainingTimeNeeded }}</b>
-        </p>
-        <p class="mb-1">
-          <span class="subheading mr-1">
-            Average time you have to work for rest of this month:
-          </span>
-          <b>{{ averageTimeNeeded }}</b>
-        </p>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <span
+            v-bind="attrs"
+            v-on="on"
+          >Remaining time: <b>{{ remainingTimeNeeded }}</b></span>
+        </template>
+        <span>Remaining time to work this month</span>
+      </v-tooltip>
+      </p>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <span
+            v-bind="attrs"
+            v-on="on"
+          >Average time: <b>{{ averageTimeNeeded }}</b></span>
+        </template>
+        <span>Average time you have to work for rest of this month</span>
+      </v-tooltip>
       </v-card-text>
     </v-card>
-    <v-card-title>Screenshot upload</v-card-title>
+    <v-card-title>Screenshot Upload</v-card-title>
     <v-card>
       <z-image-upload />
     </v-card>
