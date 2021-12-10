@@ -126,7 +126,7 @@ export default {
         .post(this.appConfig.apiUrl + "/TimeInputs", this.entry, {
           withCredentials: true
         })
-        .then((e) => {
+        .then(() => {
           this.$emit("saved", this.editingId === -1 ? "new" : "edit")
         })
         .catch((e) => console.error(e))
