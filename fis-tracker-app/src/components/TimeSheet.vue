@@ -1,10 +1,10 @@
 <template>
   <div>
-   <v-row>
-     <v-col class="pt-0 pb-0" cols="2">
-      <month-picker v-model="month" v-on:input="monthChange" />
-     </v-col>
-    </v-row> 
+    <v-row>
+      <v-col class="pt-0 pb-0" cols="2">
+        <month-picker v-model="month" v-on:input="monthChange" />
+      </v-col>
+    </v-row>
     <v-row class="mt-0">
       <v-col cols="8">
         <v-card-title>Table of attendance</v-card-title>
@@ -14,7 +14,6 @@
           class="elevation-1"
           :hide-default-footer="true"
           :item-class="workDayStyle">
-         
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate }}
           </template>
@@ -24,9 +23,7 @@
             </v-icon>
           </template>
           <template class="item-center" v-slot:[`item.actions`]="{ item }">
-            <v-icon small @click="editItem(item)">
-              mdi-pencil
-            </v-icon>
+            <v-icon small @click="editItem(item)"> mdi-pencil </v-icon>
           </template>
           <template v-slot:no-data>
             <p>No data</p>
@@ -34,17 +31,14 @@
         </v-data-table>
         <div class="mt-5">
           <v-row class="pl-3">
-            <time-edit-dialog
-              v-model="editedItem"
-              v-on:saved="updateTable">
-          </time-edit-dialog>
+            <time-edit-dialog v-model="editedItem" v-on:saved="updateTable">
+            </time-edit-dialog>
           </v-row>
         </div>
       </v-col>
       <v-col cols="4">
-        <right-panel :time="time"></right-panel>
+        <right-panel :time="time" :loading="loading"></right-panel>
       </v-col>
-      
     </v-row>
     <v-overlay :value="overlay">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -88,7 +82,8 @@ export default {
       out: null,
       homeOffice: false
     },
-    overlay: false
+    overlay: false,
+    loading: true
   }),
 
   watch: {
@@ -113,6 +108,7 @@ export default {
     },
     loadTable(yearMonth) {
       const m = yearMonth.split("-")
+      this.loading = true
       const year = m[0]
       const month = m[1]
       axios
@@ -131,6 +127,9 @@ export default {
           this.time = d.data
         })
         .catch((d) => console.error(d))
+        .finally(() => {
+          this.loading = false
+        })
     },
     workDayStyle(item) {
       return item.workDay ? "" : "grey lighten-3"

@@ -77,6 +77,21 @@ namespace FisTracker.Controllers
             return ProcessLogin(r);
         }
 
+        [HttpGet("AuthorizationCheck")]
+        public ActionResult<LoginResult> AuthorizationCheck()
+        {
+            if (Request.Headers.TryGetValue("Authorization", out Microsoft.Extensions.Primitives.StringValues tokens))
+            {
+                var token = tokens[0];
+                var user = this._context.Users.Find(this.CurrentUser.UserId);
+                return Ok(new LoginResult { Name = user.Name, UserId = user.Id, Token = token });
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost("Logout")]
         public ActionResult<LoginResult> Logout()
         {

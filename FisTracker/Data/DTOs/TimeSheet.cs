@@ -11,8 +11,9 @@ namespace FisTracker.Data
             From = from;
             To = to;
             TimeInputs = timeInputs.Select<TimeInput, TimeInputResponse>(t => new(t));
+            this.AverageTimeNeeded = TimeSpan.Zero;
 
-            _totalTime = TimeSpan.Zero;
+            this.TotalTimeWorked = TimeSpan.Zero;
             foreach (var input in timeInputs)
             {
                 var dayTime = TimeSpan.Zero;
@@ -26,36 +27,43 @@ namespace FisTracker.Data
                 {
                     dayTime -= TimeSpan.FromMinutes(30);
                 }
-                _totalTime += dayTime;
+                this.TotalTimeWorked += dayTime;
             }
 
-            var t = TimeSpan.Zero;
-            foreach (var d in Helpers.EachDay(From, To))
+            var workdays = Helpers.EachDay(From, To).Count(t => t.IsWorkDay());
+
+            this.TotalTimeNeeded = TimeSpan.FromHours(8) * (workdays - timeInputs.Count(t => t.HomeOffice));
+
+            if (from.Month == DateTime.Now.Month && to.Month == DateTime.Now.Month)
             {
-                if (d.IsWorkDay())
-                {
-                    t += TimeSpan.FromHours(8);
-                }
+                var lastInput = this.TimeInputs.OrderBy(t => t.Date).Last();
+                var futureHO = this.TimeInputs.Where(t => t.Date > lastInput.Date && t.HomeOffice).Count();
+                this.AverageTimeNeeded = this.RemainingTimeNeeded /
+                    (Helpers.EachDay(lastInput.Date.AddDays(1), To).Count(d => d.IsWorkDay())+futureHO);
             }
-            t -= TimeSpan.FromHours(8) * timeInputs.Count(t => t.HomeOffice);
-            this.TimeNeeded = t;
 
         }
 
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public IEnumerable<TimeInputResponse> TimeInputs { get; set; }
-        private TimeSpan _totalTime;
         /// <summary>
         /// Total time deduced by lunch time (30 minutes/day if not explicitly set)
         /// </summary>
-        public TimeSpan TotalTime => _totalTime;
+        public TimeSpan TotalTimeWorked { get; private set; }
 
         /// <summary>
         /// Time needed for given date range. 
         /// 8 hours for each day except weekend, holidays and days marked as homeoffice
         /// </summary>
-        public TimeSpan TimeNeeded { get; private set; }
+        public TimeSpan TotalTimeNeeded { get; private set; }
+
+        public TimeSpan RemainingTimeNeeded => this.TotalTimeNeeded - this.TotalTimeWorked;
+
+        /// <summary>
+        /// Time needed to work extra/less for each remaining workday of given range
+        /// </summary>
+        public TimeSpan AverageTimeNeeded { get; private set; }
 
     }
 }
