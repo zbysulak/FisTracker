@@ -7,23 +7,32 @@
         <p class="subheading font-weight-regular">Track your time easily.</p>
       </v-col>
     </v-row>
-    <v-row v-if="isLogged">
+    <v-container v-if="isLogged">
       <v-col cols="12">
         <time-sheet></time-sheet>
       </v-col>
-    </v-row>
-    <v-row v-else> prihlas se! </v-row>
+    </v-container>
+    <v-container class="text-center loginBtn" v-else> 
+      <h4>Prosím přihlaste se!</h4> 
+      <login />
+      <p class="mt-5 mb-0">or</p>
+      <register />
+    </v-container>
   </v-container>
 </template>
 
 <script>
 import TimeSheet from "../components/TimeSheet.vue"
+import Login from '../components/Login.vue'
+import Register from '../components/Register.vue'
 
 export default {
   name: "Home",
 
   components: {
-    TimeSheet
+    TimeSheet,
+    Login,
+    Register
   },
 
   data: () => ({
@@ -43,3 +52,14 @@ export default {
   }
 }
 </script>
+
+<style>
+
+  .loginBtn .v-btn {
+    border: 1px solid #1976d2 !important;
+    margin-right: 0 !important;
+    color: #1976d2 !important;
+    margin-top: 20px;
+  }
+
+</style>

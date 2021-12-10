@@ -36,6 +36,7 @@ export default {
   },
   watch: {
     value(val) {
+      console.log("VALUE: ", val)
       this.date = val.toString().substring(0, 10)
     }
   },

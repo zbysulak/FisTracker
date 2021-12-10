@@ -38,10 +38,26 @@ export default {
   data: () => ({
     //
   }),
+
   beforeCreate() {
-    const t = window.localStorage.token
-    this.$store.state.user = { token: t }
+    const url = this.appConfig.apiUrl + "/Users/AuthorizationCheck"
+    axios
+      .get(url)
+      .then((res) => {
+        if(res.data.token !== undefined) {
+          const t = window.localStorage.token
+          this.$store.state.user = { token: t }
+        } else {
+          this.$store.state.user = { token: undefined }
+          console.log("UNDEFINED TOKEN")
+        }
+      })
+        .catch((err) => {
+          console.log("CHYBA", err)
+          this.$store.state.user = { token: undefined }
+      })
   },
+
   mounted() {
     this.$root.snack = this.$refs.snack
   },
