@@ -119,6 +119,7 @@ export default {
       this.dialog = true
     },
     close() {
+      console.log("CLOSE MODAL")
       this.dialog = false
     },
     save() {

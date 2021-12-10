@@ -11,7 +11,6 @@
         <v-data-table
           :headers="headers"
           :items="timeInputs"
-          sort-by="calories"
           class="elevation-1"
           :hide-default-footer="true"
           :item-class="workDayStyle">
@@ -24,14 +23,13 @@
               mdi-checkbox-marked-circle-outline
             </v-icon>
           </template>
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="editItem(item)">
+          <template class="item-center" v-slot:[`item.actions`]="{ item }">
+            <v-icon small @click="editItem(item)">
               mdi-pencil
             </v-icon>
-            <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
           </template>
           <template v-slot:no-data>
-            <v-btn color="primary" @click="initialize"> Reset </v-btn>
+            <p>No data</p>
           </template>
         </v-data-table>
         <div class="mt-5">
@@ -90,7 +88,6 @@ export default {
       out: null,
       homeOffice: false
     },
-    date: "2021-11",
     overlay: false
   }),
 
@@ -112,7 +109,7 @@ export default {
       this.loadTable(a)
     },
     updateTable() {
-      this.loadTable(this.date)
+      this.loadTable(this.month)
     },
     loadTable(yearMonth) {
       const m = yearMonth.split("-")
