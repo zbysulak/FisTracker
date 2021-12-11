@@ -44,6 +44,11 @@ export default {
       return o
     }
   },
+  watch: {
+    value(v) {
+      this.date = v
+    }
+  },
   methods: {
     save: function () {
       this.menu = false

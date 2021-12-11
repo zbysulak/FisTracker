@@ -25,6 +25,8 @@ namespace FisTracker
 
         public static TimeSpan? ParseTimeSpan(string s, bool notNull = false)
         {
+            if (string.IsNullOrEmpty(s)) return null;
+            s = s.Replace(".", ":");
             return TimeSpan.TryParse(s, out TimeSpan r) ? r : (notNull ? null : TimeSpan.Zero);
         }
     }

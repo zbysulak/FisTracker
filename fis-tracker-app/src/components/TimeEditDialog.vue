@@ -17,7 +17,10 @@
                   label="Date"></date-picker-input>
               </v-col>
               <v-col cols="12" sm="6" md="6">
-                <time-picker-input v-model="entry.in" label="Arrived at">
+                <time-picker-input
+                  v-model="entry.in"
+                  label="Arrived at"
+                  clearable>
                 </time-picker-input>
               </v-col>
               <v-col cols="12" sm="6" md="6">
@@ -108,8 +111,12 @@ export default {
     },
     dialog(v) {
       if (v) {
-        const settings = JSON.parse(window.localStorage.settings)
-        this.lunch = !!settings.defaultLunch
+        if (window.localStorage.settings) {
+          const settings = JSON.parse(window.localStorage.settings)
+          this.lunch = !!settings.defaultLunch
+        } else {
+          this.lunch = true
+        }
       }
     }
   },

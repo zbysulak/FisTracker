@@ -51,31 +51,9 @@ namespace FisTracker.Controllers
         /// <param name="timeInput"></param>
         /// <returns>new/updated timeinput</returns>
         [HttpPost]
-        public async Task<ActionResult<TimeInput>> PostTimeInput(TimeInputRequest timeInput)
+        public async Task<ActionResult<TimeInputResponse>> PostTimeInput(TimeInputRequest timeInput)
         {
-            var ti = _context.TimeInputs.Find(timeInput.Date, this.CurrentUser.UserId);
-            if (ti == null)
-            {
-                ti = new()
-                {
-                    Date = timeInput.Date,
-                    UserId = this.CurrentUser.UserId,
-                    HomeOffice = timeInput.HomeOffice,
-                    In = Helpers.ParseTimeSpan(timeInput.In, true).Value,
-                    Out = Helpers.ParseTimeSpan(timeInput.Out),
-                    LunchOut = Helpers.ParseTimeSpan(timeInput.LunchOut),
-                    LunchIn = Helpers.ParseTimeSpan(timeInput.LunchIn)
-                };
-                _context.TimeInputs.Add(ti);
-            }
-            else
-            {
-                ti.HomeOffice = timeInput.HomeOffice;
-                ti.In = Helpers.ParseTimeSpan(timeInput.In);
-                ti.Out = Helpers.ParseTimeSpan(timeInput.Out);
-                ti.LunchOut = Helpers.ParseTimeSpan(timeInput.LunchOut);
-                ti.LunchIn = Helpers.ParseTimeSpan(timeInput.LunchIn);
-            }
+            var ti = UpdateTimeInput(timeInput);
 
             await _context.SaveChangesAsync();
 
@@ -103,11 +81,11 @@ namespace FisTracker.Controllers
         }
 
         [HttpPost("parseimage")]
-        public ActionResult<MessageResult> ParseImage(IFormFile image)
+        public ActionResult<ParseResult> ParseImage(IFormFile image, bool overwrite)
         {
-            if (image.ContentType != "image/png")
+            if (!image.ContentType.Contains("image/"))
             {
-                return BadRequest(new MessageResult() { Message = "wrong file type (image/png allowed)" });
+                return BadRequest(new MessageResult() { Message = "wrong file type (image/* allowed)" });
             }
 
             try
@@ -124,11 +102,11 @@ namespace FisTracker.Controllers
                         image.CopyTo(stream);
                     }
 
-                    //var text = GetImageText(fullPath);
+                    var text = GetImageText(fullPath);
 
-                    //SaveParsedText(text);
+                    var result = SaveParsedText(text, overwrite);
 
-                    return Ok(new MessageResult() { Message = "Image saved" });
+                    return Ok(result);
                 }
                 else
                 {
@@ -145,10 +123,39 @@ namespace FisTracker.Controllers
 
         #region private methods
 
+        private TimeInput UpdateTimeInput(TimeInputRequest timeInput, bool overwrite = true)
+        {
+            var ti = _context.TimeInputs.Find(timeInput.Date, this.CurrentUser.UserId);
+            if (ti == null)
+            {
+                ti = new()
+                {
+                    Date = timeInput.Date,
+                    UserId = this.CurrentUser.UserId,
+                    HomeOffice = timeInput.HomeOffice,
+                    In = Helpers.ParseTimeSpan(timeInput.In, true),
+                    Out = Helpers.ParseTimeSpan(timeInput.Out),
+                    LunchOut = Helpers.ParseTimeSpan(timeInput.LunchOut),
+                    LunchIn = Helpers.ParseTimeSpan(timeInput.LunchIn)
+                };
+                _context.TimeInputs.Add(ti);
+            }
+            else if(overwrite)
+            {
+                ti.HomeOffice = timeInput.HomeOffice;
+                ti.In = Helpers.ParseTimeSpan(timeInput.In);
+                ti.Out = Helpers.ParseTimeSpan(timeInput.Out);
+                ti.LunchOut = Helpers.ParseTimeSpan(timeInput.LunchOut);
+                ti.LunchIn = Helpers.ParseTimeSpan(timeInput.LunchIn);
+            }
+            _context.SaveChanges();
+            return ti;
+        }
+
         private bool CheckDate(DayOfWeek actual, string expected)
         {
             if (string.IsNullOrEmpty(expected)) return false;
-            expected = expected.ToUpper().Replace('Ú', 'U').Replace('Č', 'C').Replace('Á', 'A');
+            expected = expected.ToUpper().Replace('Ú', 'U').Replace('Č', 'C').Replace('Á', 'A').Replace('Å','A');
             return actual switch
             {
                 DayOfWeek.Sunday => expected.Equals("NE"),
@@ -198,110 +205,74 @@ namespace FisTracker.Controllers
 
         }
 
-        private void SaveParsedText(IEnumerable<EntityAnnotation> text)
+        private void ParseAndUpdate(IList<string> times, DateTime date, bool overwrite, ref ParseResult result)
         {
+            var ti = new TimeInputRequest();
+            switch (times.Count)
+            {
+                case 1:
+                    ti.In = times[0];
+                    break;
+                case 2:
+                    ti.In = times[0];
+                    ti.Out = times[1];
+                    break;
+                case 3:
+                    ti.In = times[0];
+                    ti.LunchOut = times[1];
+                    ti.LunchIn = times[2];
+                    break;
+                case 4:
+                    ti.In = times[0];
+                    ti.LunchOut = times[1];
+                    ti.LunchIn = times[2];
+                    ti.Out = times[3];
+                    break;
+            }
+            ti.Date = date;
+            if (result.MinDate > ti.Date)
+                result.MinDate = ti.Date;
+            if (result.MaxDate < ti.Date)
+                result.MaxDate = ti.Date;
+            this.UpdateTimeInput(ti, overwrite);
+        }
+
+        private ParseResult SaveParsedText(IEnumerable<EntityAnnotation> text, bool overwrite)
+        {
+            var result = new ParseResult();
             var all = text.First().Description.Split("\n");
             DateTime currentRow = DateTime.MinValue;
-            var times = new List<TimeSpan>();
-            foreach (var desc in all)
+            var times = new List<string>();
+            foreach (var desc in all.Where(s => !string.IsNullOrEmpty(s))) // iterare over all descriptions (texts found in image)
             {
                 var date = ParseDate(desc);
                 if (date != DateTime.MinValue) // new row
                 {
                     if (currentRow != DateTime.MinValue)
                     {
-                        var ti = new TimeInput();
-                        switch (times.Count)
+                        try
                         {
-                            case 1:
-                                ti.In = times[0];
-                                break;
-                            case 2:
-                                ti.In = times[0];
-                                ti.Out = times[1];
-                                break;
-                            case 4:
-                                ti.In = times[0];
-                                ti.LunchOut = times[1];
-                                ti.LunchIn = times[2];
-                                ti.Out = times[3];
-                                break;
+                            ParseAndUpdate(times, currentRow, overwrite, ref result);
                         }
-                        ti.Date = currentRow;
-                        ti.UserId = this.CurrentUser.UserId;
-                        _context.TimeInputs.Add(ti);
-                        _context.SaveChanges();
-                        times.Clear();
+                        catch (Exception ex)
+                        {
+                            _logger.LogError("failed to save something", ex);
+                        }
+                        finally
+                        {
+                            times.Clear();
+                        }
                     }
                     currentRow = date;
                 }
-                else if (TimeSpan.TryParse(desc, out TimeSpan t)) // time row
+                else // time description
                 {
-                    times.Add(t);
+                    times.Add(desc);
                 }
             }
-
-            //attempt to parse by individual pieces
-            /*
-            text = text.Skip(1); // first is element with all data 
-            // i expect it to be sorted left-right, top-bottom
-            var currentRowY = 0; // y coordinate
-            var currentRowCount = 0;
-            var enumerator = text.GetEnumerator();
-            string dateString = "";
-            var times = new List<string>();
-            while (enumerator.MoveNext())
-            {
-                var cur = enumerator.Current;
-                if (currentRowY == 0) {
-                    currentRowY = cur.BoundingPoly.Vertices.First().Y;
-                }
-                else // check if i am still at same row
-                {
-                    int cY = cur.BoundingPoly.Vertices.First().Y;
-                    if (Math.Abs(currentRowY - cY) > 6)
-                    {
-                        //I think im at next row (or just wrong)
-                        var ti = new TimeInput();
-                        switch (times.Count) { 
-                            case 1:
-                                ti.In = TimeSpan.Parse(times[0]);
-                                break;
-                            case 2:
-                                ti.In = TimeSpan.Parse(times[0]);
-                                ti.Out = TimeSpan.Parse(times[1]);
-                                break;
-                            case 4:
-                                ti.In = TimeSpan.Parse(times[0]);
-                                ti.LunchOut = TimeSpan.Parse(times[1]);
-                                ti.LunchIn = TimeSpan.Parse(times[2]);
-                                ti.Out = TimeSpan.Parse(times[3]);
-                                break;
-                        }
-                        ti.Date = this.ParseDate(dateString);
-                        _context.TimeInputs.Add(ti);
-                        _context.SaveChanges();
-                        System.Diagnostics.Debug.WriteLine($"Inserted new row ({ti})");
-                        currentRowCount = 0;
-                        dateString = "";
-                        times.Clear();
-                    }
-                }
-                System.Diagnostics.Debug.WriteLine($"Description: {cur.Description}, [{cur.BoundingPoly.Vertices.First().X},{cur.BoundingPoly.Vertices.First().Y}]");
-                switch (currentRowCount)
-                {
-                    case 0: // d.m.
-                    case 1: // yyyy
-                    case 2: // should be dash
-                    case 3: // day name
-                        dateString += cur.Description;
-                        break;
-                    default:
-                        times.Add(cur.Description);
-                        break;
-                }
-                currentRowCount++;
-            }*/
+            //don't forget last row
+            ParseAndUpdate(times, currentRow, overwrite, ref result);
+            return result;
         }
 
         private IReadOnlyList<EntityAnnotation> GetImageText(string path)
@@ -316,10 +287,6 @@ namespace FisTracker.Controllers
             ImageAnnotatorClient client = builder.Build();
 
             IReadOnlyList<EntityAnnotation> textAnnotations = client.DetectText(image1);
-            /*foreach (EntityAnnotation text in textAnnotations)
-            {
-                System.Diagnostics.Debug.WriteLine($"Description: {text.Description}");
-            }*/
             return textAnnotations;
         }
         #endregion

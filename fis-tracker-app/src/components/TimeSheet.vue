@@ -13,7 +13,8 @@
           :items="timeInputs"
           class="elevation-1"
           :hide-default-footer="true"
-          :item-class="workDayStyle">
+          :item-class="workDayStyle"
+          :items-per-page="-1">
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate }}
           </template>
@@ -37,7 +38,11 @@
         </div>
       </v-col>
       <v-col cols="3">
-        <right-panel :time="time" :loading="loading"></right-panel>
+        <overview-panel
+          :time="time"
+          :loading="loading"
+          class="mb-4"></overview-panel>
+        <image-upload v-on:uploaded="reloadTable"></image-upload>
       </v-col>
     </v-row>
     <v-overlay :value="overlay">
@@ -47,12 +52,13 @@
 </template>
 <script>
 import axios from "axios"
-import RightPanel from "./RightPanel.vue"
+import OverviewPanel from "./OverviewPanel.vue"
 import TimeEditDialog from "./TimeEditDialog.vue"
 import MonthPicker from "./MonthPicker.vue"
+import ImageUpload from "./ImageUpload.vue"
 
 export default {
-  components: { TimeEditDialog, RightPanel, MonthPicker },
+  components: { TimeEditDialog, OverviewPanel, MonthPicker, ImageUpload },
   data: () => ({
     month: new Date().toISOString().substring(0, 7),
     dialog: false,
@@ -100,6 +106,10 @@ export default {
   },
 
   methods: {
+    reloadTable(e) {
+      this.month = e
+      this.updateTable()
+    },
     monthChange(a) {
       this.loadTable(a)
     },

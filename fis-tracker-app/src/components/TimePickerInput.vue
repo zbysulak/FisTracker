@@ -18,6 +18,7 @@
           readonly
           v-bind="attrs"
           v-on="on"
+          @click:clear="$emit('input', '')"
           :clearable="clearable"></v-text-field>
       </template>
       <v-time-picker

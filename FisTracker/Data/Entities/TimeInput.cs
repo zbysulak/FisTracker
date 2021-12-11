@@ -9,7 +9,6 @@ namespace FisTracker.Data
     {
         [Required]
         public DateTime Date { get; set; }
-        [Required]
         public TimeSpan? In { get; set; }
         public TimeSpan? Out { get; set;}
         public TimeSpan? LunchIn { get; set; }
