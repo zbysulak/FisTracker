@@ -1,24 +1,24 @@
 <template>
   <div>
-    <v-dialog v-if="!isLogged" v-model="dialog" persistent max-width="600px">
+    <v-dialog v-model="dialog" persistent max-width="600px">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn class="mr-10" color="white" outlined v-bind="attrs" v-on="on">
-          Login
-          <v-icon>mdi-login</v-icon>
+        <v-btn class="mr-10" color="blue" outlined v-bind="attrs" v-on="on">
+          Register
         </v-btn>
       </template>
       <v-card>
-        <v-form @submit.prevent="login">
+        <v-form @submit.prevent="register">
           <v-card-title>
-            <span class="text-h5">Login</span>
+            <span class="text-h5">Register new account</span>
           </v-card-title>
           <v-card-text>
+            <v-container>
               <v-row>
                 <v-col cols="12">
                   <v-text-field
                     v-model="name"
                     :error-messages="nameError"
-                    label="Name *"
+                    label="Name"
                     required
                     @input="$v.name.$touch()"
                     @blur="$v.name.$touch()"
@@ -28,7 +28,7 @@
                   <v-text-field
                     v-model="password"
                     :error-messages="passError"
-                    label="Password *"
+                    label="Password"
                     type="password"
                     required
                     @input="$v.password.$touch()"
@@ -36,24 +36,19 @@
                     class="mr-4"></v-text-field>
                 </v-col>
               </v-row>
+            </v-container>
             <small>*indicates required field</small>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn outlined color="black darken-1" text @click="dialog = false">
+            <v-btn color="black darken-1" text @click="dialog = false">
               Close
             </v-btn>
-            <v-btn color="blue darken-1" text @click="authTest">
-              Auth test
-            </v-btn>
-            <v-btn color="primary" type="submit"> Log in </v-btn>
+            <v-btn color="primary" type="submit">Register</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
     </v-dialog>
-    <v-btn v-else @click="logout" class="mr-10" color="white" outlined Log out>
-      Logout<v-icon>mdi-logout</v-icon>
-    </v-btn>
   </div>
 </template>
 
@@ -63,7 +58,7 @@ import { required } from "vuelidate/lib/validators"
 import axios from "axios"
 
 export default {
-  name: "Login",
+  name: "Register",
 
   components: {},
 
@@ -75,25 +70,13 @@ export default {
   },
 
   data: () => ({
+    name: "",
+    password: "",
     dialog: false,
-    name: process.env.NODE_ENV === "production" ? "" : "Martin",
-    password: process.env.NODE_ENV === "production" ? "" : "Martin$1",
     error: null,
     success: false,
-    isLogged: false
   }),
-  watch: {
-    "$store.state.user": {
-      handler: function () {
-        if (!this.$store.state.user.token) {
-          this.isLogged = false
-        } else {
-          this.isLogged = true
-        }
-      },
-      immediate: true // provides initial (not changed yet) state
-    }
-  },
+
   computed: {
     nameError() {
       const errors = []
@@ -113,34 +96,14 @@ export default {
   },
 
   methods: {
-    logout() {
-      axios.post(this.appConfig.apiUrl + "/Users/Logout", {}).then(() => {
-        this.$store.state.user = {}
-        window.localStorage.removeItem("token")
-        this.$root.snack.show({ message: "Successfully logout!" })
-      })
-    },
+
     submit() {
       this.$v.$touch()
     },
 
-    authTest() {
-      const url = this.appConfig.apiUrl + "/Test/Auth"
-      this.success = false
-      this.error = null
-      axios
-        .get(url, { headers: { Authorization: this.token } })
-        .then((res) => {
-          console.log("result", res.data)
-        })
-        .catch((err) => {
-          this.error = err.message
-        })
-    },
-
-    login() {
+    register() {
       const auth = { name: this.name, password: this.password }
-      const url = this.appConfig.apiUrl + "/Users/Login"
+      const url = this.appConfig.apiUrl + "/Users/Register"
       this.success = false
       this.error = null
       axios
@@ -150,7 +113,7 @@ export default {
           this.dialog = false
           this.$store.state.user = res.data
           window.localStorage.token = res.data.token
-          this.$root.snack.show({ message: "Successfully log in!" })
+          this.$root.snack.show({ message: "Successfully registred!" })
         })
         .catch((err) => {
           this.error = err.message

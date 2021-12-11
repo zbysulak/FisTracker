@@ -51,7 +51,6 @@ namespace FisTracker.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<TimeSpan?>("In")
-                        .IsRequired()
                         .HasColumnType("time(6)");
 
                     b.Property<TimeSpan?>("LunchIn")

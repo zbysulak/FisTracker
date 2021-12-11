@@ -35,8 +35,8 @@ export default {
     }
   },
   watch: {
-    value(val, old) {
-      console.log("val updated", val, old)
+    value(val) {
+      console.log("VALUE: ", val)
       this.date = val.toString().substring(0, 10)
     }
   },

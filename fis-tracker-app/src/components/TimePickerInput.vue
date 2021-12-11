@@ -13,11 +13,13 @@
       <template v-slot:activator="{ on, attrs }">
         <v-text-field
           v-model="time"
-          label="Picker in menu"
+          :label="label"
           prepend-icon="mdi-clock-time-four-outline"
           readonly
           v-bind="attrs"
-          v-on="on"></v-text-field>
+          v-on="on"
+          @click:clear="$emit('input', '')"
+          :clearable="clearable"></v-text-field>
       </template>
       <v-time-picker
         v-if="picker"
@@ -41,13 +43,11 @@ export default {
     time: ""
   }),
   watch: {
-    value(val, old) {
-      console.log("time updated", val, old)
+    value(val) {
       this.time = val
     }
   },
   mounted: function () {
-    console.log("timeinput mounted", this.value)
     this.time = this.value
   }
 }

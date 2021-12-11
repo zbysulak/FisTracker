@@ -37,7 +37,6 @@ namespace FisTracker.Controllers
 
         private ActionResult<LoginResult> ProcessLogin(LoginRequest r)
         {
-
             var user = _context.Users.FirstOrDefaultAsync(u => u.Name == r.Name).Result;
             if (user == null)
             {
@@ -47,27 +46,16 @@ namespace FisTracker.Controllers
             {
                 return Unauthorized(new MessageResult { Message = "Wrong password", IsError = true });
             }
-            var sessionId = this.HttpContext.Session.Id;
-            var savedSession = _context.Sessions.Find(sessionId);
-            this.HttpContext.Session.Set("persist-session", new byte[] { 1 });
-            if (savedSession != null)
+            var newGuid = Guid.NewGuid().ToString();
+            _context.Sessions.Add(new Session()
             {
-                savedSession.UserId = user.Id;
-                savedSession.State = SessionState.Valid;
-                savedSession.ValidTo = DateTime.Now.AddHours(1);
-            }
-            else
-            {
-                _context.Sessions.Add(new Session()
-                {
-                    State = SessionState.Valid,
-                    UserId = user.Id,
-                    ValidTo = DateTime.Now.AddHours(1),
-                    Id = this.HttpContext.Session.Id
-                });
-            }
+                State = SessionState.Valid,
+                UserId = user.Id,
+                ValidTo = DateTime.Now.AddHours(1),
+                Id = newGuid
+            });
             _context.SaveChanges();
-            return Ok(new LoginResult { Name = r.Name, UserId = user.Id, Token = this.HttpContext.Session.Id });
+            return Ok(new LoginResult { Name = r.Name, UserId = user.Id, Token = newGuid });
         }
 
         [AllowAnonymous]
@@ -75,6 +63,21 @@ namespace FisTracker.Controllers
         public ActionResult<LoginResult> Login(LoginRequest r)
         {
             return ProcessLogin(r);
+        }
+
+        [HttpGet("AuthorizationCheck")]
+        public ActionResult<LoginResult> AuthorizationCheck()
+        {
+            if (Request.Headers.TryGetValue("Authorization", out Microsoft.Extensions.Primitives.StringValues tokens))
+            {
+                var token = tokens[0];
+                var user = this._context.Users.Find(this.CurrentUser.UserId);
+                return Ok(new LoginResult { Name = user.Name, UserId = user.Id, Token = token });
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost("Logout")]

@@ -17,20 +17,9 @@
                   label="Date"></date-picker-input>
               </v-col>
               <v-col cols="12" sm="6" md="6">
-                <time-picker-input v-model="entry.in" label="Arrived at">
-                </time-picker-input>
-              </v-col>
-              <v-col cols="12" sm="6" md="6">
                 <time-picker-input
-                  v-model="entry.lunchOut"
-                  label="Lunch break start"
-                  clearable>
-                </time-picker-input>
-              </v-col>
-              <v-col cols="12" sm="6" md="6">
-                <time-picker-input
-                  v-model="entry.lunchIn"
-                  label="Lunch break end"
+                  v-model="entry.in"
+                  label="Arrived at"
                   clearable>
                 </time-picker-input>
               </v-col>
@@ -41,7 +30,30 @@
                   clearable>
                 </time-picker-input>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-expand-transition>
+                <v-col cols="2" class="ma-0" md="12" v-show="lunch">
+                  <v-row>
+                    <v-col cols="12" sm="6" md="6">
+                      <time-picker-input
+                        v-model="entry.lunchOut"
+                        label="Lunch break start"
+                        clearable>
+                      </time-picker-input>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <time-picker-input
+                        v-model="entry.lunchIn"
+                        label="Lunch break end"
+                        clearable>
+                      </time-picker-input>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-expand-transition>
+              <v-col cols="12" sm="6" md="6">
+                <v-checkbox v-model="lunch" label="Lunch break"></v-checkbox>
+              </v-col>
+              <v-col cols="12" sm="6" md="6">
                 <v-checkbox
                   v-model="entry.homeOffice"
                   label="Homeoffice / Holiday"></v-checkbox>
@@ -83,20 +95,29 @@ export default {
       lunchOut: null,
       homeOffice: false
     },
+    lunch: true,
     editingId: -1,
     dialog: false,
     entry: {}
   }),
   watch: {
     value(n) {
-      console.log("prop value updated", n)
       n.in = n.in?.formatted
       n.out = n.out?.formatted
       n.lunchOut = n.lunchOut?.formatted
       n.lunchIn = n.lunchIn?.formatted
-      console.log("updated n", n)
       this.entry = n
       this.dialog = true
+    },
+    dialog(v) {
+      if (v) {
+        if (window.localStorage.settings) {
+          const settings = JSON.parse(window.localStorage.settings)
+          this.lunch = !!settings.defaultLunch
+        } else {
+          this.lunch = true
+        }
+      }
     }
   },
   methods: {
@@ -105,17 +126,15 @@ export default {
       this.dialog = true
     },
     close() {
+      console.log("CLOSE MODAL")
       this.dialog = false
     },
     save() {
-      console.log("save:  ", this.entry)
-
       axios
         .post(this.appConfig.apiUrl + "/TimeInputs", this.entry, {
           withCredentials: true
         })
-        .then((e) => {
-          console.log("saved", e)
+        .then(() => {
           this.$emit("saved", this.editingId === -1 ? "new" : "edit")
         })
         .catch((e) => console.error(e))

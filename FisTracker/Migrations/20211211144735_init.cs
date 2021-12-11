@@ -56,7 +56,7 @@ namespace FisTracker.Migrations
                 {
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    In = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    In = table.Column<TimeSpan>(type: "time(6)", nullable: true),
                     Out = table.Column<TimeSpan>(type: "time(6)", nullable: true),
                     LunchIn = table.Column<TimeSpan>(type: "time(6)", nullable: true),
                     LunchOut = table.Column<TimeSpan>(type: "time(6)", nullable: true),

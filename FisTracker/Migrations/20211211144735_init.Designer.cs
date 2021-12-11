@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FisTracker.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211208152911_init")]
+    [Migration("20211211144735_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,7 +53,6 @@ namespace FisTracker.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<TimeSpan?>("In")
-                        .IsRequired()
                         .HasColumnType("time(6)");
 
                     b.Property<TimeSpan?>("LunchIn")

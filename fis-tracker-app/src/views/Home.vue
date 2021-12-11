@@ -1,53 +1,76 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row class="text-center">
       <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">Welcome</h1>
+        <h1 class="display-2 font-weight-bold mb-3">Welcome {{ userName }}</h1>
 
-        <p class="subheading font-weight-regular">Track your time easily.</p>
+        <p class="subheading font-weight-regular">Insert your time manually or upload screenshot of your attendance</p>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col md="9">
+    <v-container v-if="isLogged" fluid>
+      <v-col cols="12">
         <time-sheet></time-sheet>
       </v-col>
-      <v-col md="3">
-        <RightPanel />
-      </v-col>
-    </v-row>
-    <v-divider class="mt-12 mb-12"></v-divider>
-    <v-row class="text-center">
-      <UploadImage />
-    </v-row>
+    </v-container>
+    <v-container class="text-center loginBtn" v-else> 
+      <h4>Please, sign in!</h4> 
+      <login />
+      <p class="mt-5 mb-0">or</p>
+      <register />
+    </v-container>
   </v-container>
 </template>
 
 <script>
-import RightPanel from "../components/RightPanel"
 import TimeSheet from "../components/TimeSheet.vue"
-import UploadImage from "../components/UploadImage"
+import Login from '../components/Login.vue'
+import Register from '../components/Register.vue'
 
 export default {
   name: "Home",
 
   components: {
-    RightPanel,
-    UploadImage,
-    TimeSheet
+    TimeSheet,
+    Login,
+    Register
   },
 
   data: () => ({
-    //
+    isLogged: false,
+    userName: ""
   }),
-
   watch: {
-    "$store.state.count": {
-      handler: function (nv) {
-        console.log(nv)
-        // neco proved
+    "$store.state.user": {
+      handler: function () {
+        if (!this.$store.state.user.token) {
+          this.isLogged = false
+          this.userName = ""
+        } else {
+          this.isLogged = true
+          console.log(this.$store.state.user.name)
+          this.userName = this.$store.state.user.name
+        }
       },
       immediate: true // provides initial (not changed yet) state
     }
+  },
+  computed: {
+    
   }
 }
 </script>
+
+<style>
+
+  .container {
+    max-width: 90%;
+  }
+
+  .loginBtn .v-btn {
+    border: 1px solid #1976d2 !important;
+    margin-right: 0 !important;
+    color: #1976d2 !important;
+    margin-top: 20px;
+  }
+
+</style>
