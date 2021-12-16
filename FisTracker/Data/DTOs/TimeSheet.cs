@@ -36,10 +36,11 @@ namespace FisTracker.Data
 
             if (from.Month == DateTime.Now.Month && to.Month == DateTime.Now.Month)
             {
-                var lastInput = this.TimeInputs.OrderBy(t => t.Date).Last();
-                var futureHO = this.TimeInputs.Where(t => t.Date > lastInput.Date && t.HomeOffice).Count();
+                var lastInput = this.TimeInputs.OrderBy(t => t.Date).LastOrDefault();
+                var lastDate = lastInput?.Date ?? from.AddDays(-1);
+                var futureHO = this.TimeInputs.Where(t => t.Date > lastDate && t.HomeOffice).Count();
                 this.AverageTimeNeeded = this.RemainingTimeNeeded /
-                    (Helpers.EachDay(lastInput.Date.AddDays(1), To).Count(d => d.IsWorkDay())+futureHO);
+                    (Helpers.EachDay(lastDate.AddDays(1), To).Count(d => d.IsWorkDay()) + futureHO);
             }
 
         }
