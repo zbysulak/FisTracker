@@ -1,5 +1,11 @@
 <template>
   <v-app>
+    <v-overlay :value="isLoading">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
         <v-img
@@ -18,7 +24,7 @@
         <Login />
       </v-row>
     </v-app-bar>
-    <v-main>
+    <v-main v-if="!isLoading">
       <router-view></router-view>
     </v-main>
     <snack ref="snack" />
@@ -36,7 +42,8 @@ export default {
   components: { Login, Settings, Snack },
 
   data: () => ({
-    isLogged: false
+    isLogged: false,
+    isLoading: true
   }),
 
   beforeCreate() {
@@ -49,7 +56,6 @@ export default {
           const t = window.localStorage.token
           this.$store.state.user = { token: t }
           this.isLogged = true
-          console.log("isLogged2: ", this.isLogged)
         } else {
           this.$store.state.user = { token: undefined }
           this.isLogged = false
@@ -59,11 +65,12 @@ export default {
         .catch((err) => {
           console.log("CHYBA", err)
           this.$store.state.user = { token: undefined }
+      }).finally(() => {
+          this.isLoading = false
       })
   },
 
   mounted() {
-    console.log("isLogged1: ", this.isLogged)
     this.$root.snack = this.$refs.snack
   },
   watch: {
