@@ -67,6 +67,20 @@ namespace FisTracker
                          .Requirements.Add(new SimpleAuthorizationRequirement());
                  });
              });
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (ctx) =>
+                {
+                    return new BadRequestObjectResult(new Data.MessageResult()
+                    {
+                        IsError = true,
+                        Message = String.Join(" ", ctx.ModelState
+                        .Where(ms => ms.Value.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)
+                        .Select(inv => String.Join(" ", inv.Value.Errors.Select(e => e.ErrorMessage))))
+                    });
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

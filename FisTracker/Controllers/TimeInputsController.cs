@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Google.Apis.Auth.OAuth2;
+using System.ComponentModel.DataAnnotations;
 
 namespace FisTracker.Controllers
 {
@@ -29,10 +30,11 @@ namespace FisTracker.Controllers
 
         // GET: api/TimeInputs
         [HttpGet]
-        public async Task<ActionResult<TimeSheet>> GetTimeInputs(int month, int year)
+        public async Task<ActionResult<TimeSheet>> GetTimeInputs([Range(1, 12)] int month, int year)
         {
             _logger.LogInformation($"request for timesheet of {month}/{year} from user {this.CurrentUser.UserId}");
             DateTime d = new DateTime(year, month, 1);
+            var test = await _context.TimeInputs.ToListAsync();
             var times = await _context.TimeInputs.Where(ti =>
                 ti.UserId == this.CurrentUser.UserId &&
                 ti.Date >= d && ti.Date < d.AddMonths(1)
