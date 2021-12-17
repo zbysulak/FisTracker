@@ -33,8 +33,7 @@ namespace FisTracker.Controllers
         public async Task<ActionResult<TimeSheet>> GetTimeInputs([Range(1, 12)] int month, int year)
         {
             _logger.LogInformation($"request for timesheet of {month}/{year} from user {this.CurrentUser.UserId}");
-            DateTime d = new DateTime(year, month, 1);
-            var test = await _context.TimeInputs.ToListAsync();
+            DateTime d = new(year, month, 1);
             var times = await _context.TimeInputs.Where(ti =>
                 ti.UserId == this.CurrentUser.UserId &&
                 ti.Date >= d && ti.Date < d.AddMonths(1)
