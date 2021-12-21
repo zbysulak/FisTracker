@@ -154,6 +154,18 @@ export default {
         })
         .catch((err) => {
           this.error = err.message
+
+          if (err.response.status == 401) {
+            //alert(err.response.data.message)
+            this.$root.snack.show({ message: "Your password is invalid!", color: "error", icon: "mdi-alert-circle-outline" })
+            //console.log(err.response)
+          }
+
+          if (err.response.status == 404) {
+            //alert(err.response.data.message)
+            this.$root.snack.show({ message: "User not found!", color: "error", icon: "mdi-alert-circle-outline" })
+            //console.log(err.response.data.code, 'User not Found')
+          }
         })
     }
   }
