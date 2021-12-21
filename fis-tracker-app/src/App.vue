@@ -19,13 +19,57 @@
         <span class="font-weight-bold">FisTracker</span>
       </div>
       <v-spacer></v-spacer>
-      <v-row class="justify-end">
+      <v-row class="justify-end align-center">
+        <div class="text-center">
+          <v-dialog
+            v-model="dialog"
+            width="800"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                class="mr-5"
+                text
+              >
+                FAQ
+              </v-btn>
+            </template>
+
+            <v-card>
+              <v-card-title class="text-h5 grey lighten-2">
+                FAQ
+              </v-card-title>
+
+              <v-card-text class="pt-5">
+                <faq />
+              </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="primary"
+                  text
+                  @click="dialog = false"
+                >
+                  Close
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </div>
         <settings  v-if="isLogged"/>
         <Login />
       </v-row>
     </v-app-bar>
     <v-main v-if="!isLoading">
       <router-view></router-view>
+      <div class="faq mt-5" v-if="!isLogged">
+        <h3 class="mb-2">How it works</h3>
+        <faq />
+      </div>
     </v-main>
     <v-footer
       padless
@@ -43,12 +87,14 @@ import Settings from "./components/Settings.vue"
 import Snack from "./components/Snack.vue"
 import axios from "axios"
 import Footer from './components/Footer.vue'
+import Faq from './components/Faq.vue'
 
 export default {
   name: "App",
-  components: { Login, Settings, Snack, Footer },
+  components: { Login, Settings, Snack, Footer, Faq },
 
   data: () => ({
+    dialog: false,
     isLogged: false,
     isLoading: true
   }),
@@ -97,3 +143,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .faq {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .faq h3 {
+    text-align: center;
+  }
+</style>

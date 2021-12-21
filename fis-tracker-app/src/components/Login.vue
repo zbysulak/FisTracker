@@ -48,8 +48,8 @@
         </v-form>
       </v-card>
     </v-dialog>
-    <v-btn v-else @click="logout" class="mr-10" color="white" outlined Log out>
-      Logout<v-icon>mdi-logout</v-icon>
+    <v-btn v-else @click="logout" icon>
+      <v-icon> mdi-logout </v-icon>
     </v-btn>
   </div>
 </template>
