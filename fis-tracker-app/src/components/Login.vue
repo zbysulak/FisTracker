@@ -43,9 +43,6 @@
             <v-btn outlined color="black darken-1" text @click="dialog = false">
               Close
             </v-btn>
-            <v-btn color="blue darken-1" text @click="authTest">
-              Auth test
-            </v-btn>
             <v-btn color="primary" type="submit"> Log in </v-btn>
           </v-card-actions>
         </v-form>
@@ -123,21 +120,6 @@ export default {
     submit() {
       this.$v.$touch()
     },
-
-    authTest() {
-      const url = this.appConfig.apiUrl + "/Test/Auth"
-      this.success = false
-      this.error = null
-      axios
-        .get(url, { headers: { Authorization: this.token } })
-        .then((res) => {
-          console.log("result", res.data)
-        })
-        .catch((err) => {
-          this.error = err.message
-        })
-    },
-
     login() {
       const auth = { name: this.name, password: this.password }
       const url = this.appConfig.apiUrl + "/Users/Login"

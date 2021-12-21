@@ -16,7 +16,7 @@
           transition="scale-transition"
           width="40" />
 
-        <span class="font-weight-bold">FisTracker v1.0</span>
+        <span class="font-weight-bold">FisTracker</span>
       </div>
       <v-spacer></v-spacer>
       <v-row class="justify-end">
