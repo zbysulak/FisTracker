@@ -27,6 +27,12 @@
     <v-main v-if="!isLoading">
       <router-view></router-view>
     </v-main>
+    <v-footer
+      padless
+      color="white"
+    >
+      <Footer />
+    </v-footer>
     <snack ref="snack" />
   </v-app>
 </template>
@@ -36,10 +42,11 @@ import Login from "./components/Login"
 import Settings from "./components/Settings.vue"
 import Snack from "./components/Snack.vue"
 import axios from "axios"
+import Footer from './components/Footer.vue'
 
 export default {
   name: "App",
-  components: { Login, Settings, Snack },
+  components: { Login, Settings, Snack, Footer },
 
   data: () => ({
     isLogged: false,
