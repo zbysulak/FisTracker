@@ -12,7 +12,7 @@
             <span class="text-h5">Register new account</span>
           </v-card-title>
           <v-card-text>
-            <v-container>
+            <div>
               <v-row>
                 <v-col cols="12">
                   <v-text-field
@@ -36,7 +36,7 @@
                     class="mr-4"></v-text-field>
                 </v-col>
               </v-row>
-            </v-container>
+            </div>
             <small>*indicates required field</small>
           </v-card-text>
           <v-card-actions>
@@ -74,7 +74,7 @@ export default {
     password: "",
     dialog: false,
     error: null,
-    success: false,
+    success: false
   }),
 
   computed: {
