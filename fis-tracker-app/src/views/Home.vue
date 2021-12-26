@@ -2,18 +2,18 @@
   <v-container fluid>
     <v-row class="text-center">
       <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">Welcome {{ userName }}</h1>
+        <h1 class="font-weight-bold mb-3">Welcome {{ userName }}</h1>
 
         <p class="subheading font-weight-regular">
           Insert your time manually or upload screenshot of your attendance
         </p>
       </v-col>
     </v-row>
-    <v-container v-if="isLogged" fluid>
+    <div v-if="isLogged">
       <v-col cols="12">
         <time-sheet></time-sheet>
       </v-col>
-    </v-container>
+    </div>
     <v-container class="text-center loginBtn" v-else>
       <h4>Please, sign in!</h4>
       <login />
@@ -61,6 +61,7 @@ export default {
 </script>
 
 <style>
+
 .container {
   max-width: 90%;
 }

@@ -1,12 +1,12 @@
 <template>
   <div>
     <v-row>
-      <v-col class="pt-0 pb-0" cols="3">
+      <v-col class="pt-0 pb-0 col-xs-12 col-sm-3">
         <month-picker v-model="month" v-on:input="monthChange" />
       </v-col>
     </v-row>
-    <v-row class="mt-0">
-      <v-col cols="9">
+    <v-row class="mt-0 mobile_block">
+      <v-col class="col-sm-9 col-xs-12 mobile_block">
         <v-card-title>Table of attendance</v-card-title>
         <v-data-table
           :headers="headers"
@@ -37,7 +37,7 @@
           </v-row>
         </div>
       </v-col>
-      <v-col cols="3">
+      <v-col class="col-sm-3 col-xs-12 mobile_block">
         <overview-panel
           :time="time"
           :loading="loading"

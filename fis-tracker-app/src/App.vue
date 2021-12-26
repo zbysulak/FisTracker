@@ -122,7 +122,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .faq {
   width: 60%;
   margin-left: auto;
@@ -131,4 +131,22 @@ export default {
 .faq h3 {
   text-align: center;
 }
+
+@media only screen and (max-width: 600px) {
+
+  .mobile_block {
+    display: block !important;
+  }
+  
+  .faq {
+    width: 80%;
+    margin-bottom: 50px;
+  }
+
+  .display-2 {
+    font-size: 2rem !important;
+  }
+
+}
+
 </style>
