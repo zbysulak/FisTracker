@@ -4,8 +4,11 @@
       <v-col class="mb-4">
         <h1 class="font-weight-bold mb-3">Welcome {{ userName }}</h1>
 
-        <p class="subheading font-weight-regular">
+        <p class="subheading font-weight-regular justify-center d-none d-sm-flex">
           Insert your time manually or upload screenshot of your attendance
+        </p>
+        <p class="subheading font-weight-regular justify-center d-flex d-sm-none">
+          Trck your time at work by simply clicling "IN" button for arrival and "OUT" for departure.
         </p>
       </v-col>
     </v-row>

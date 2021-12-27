@@ -132,7 +132,24 @@ export default {
   text-align: center;
 }
 
+
+@media only screen and (min-width: 601px) {
+  
+  .desktop_none {
+    display: none;
+  }
+
+}
+
 @media only screen and (max-width: 600px) {
+
+  .container {
+    max-width: 95% !important;
+  }
+
+  .mobile_none {
+    display: none !important;
+  }
 
   .mobile_block {
     display: block !important;
