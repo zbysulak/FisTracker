@@ -23,7 +23,7 @@ namespace FisTracker.Data
                 {
                     dayTime -= input.LunchIn.Value - input.LunchOut.Value;
                 }
-                else if (input.Date.IsWorkDay())
+                else if (input.Date.IsWorkDay() && !input.HomeOffice)
                 {
                     dayTime -= TimeSpan.FromMinutes(30);
                 }

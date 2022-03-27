@@ -116,7 +116,7 @@ namespace FisTracker.Controllers
             }
             catch (Exception ex)
             {
-                this._logger.LogError("Failed to process image", ex);
+                this._logger.LogError(ex, "Failed to process image");
                 return StatusCode(500, new MessageResult() { Message = "Failed to process image" });
             }
 
@@ -141,7 +141,7 @@ namespace FisTracker.Controllers
                 };
                 _context.TimeInputs.Add(ti);
             }
-            else if(overwrite)
+            else if (overwrite)
             {
                 ti.HomeOffice = timeInput.HomeOffice;
                 ti.In = Helpers.ParseTimeSpan(timeInput.In);
@@ -156,7 +156,7 @@ namespace FisTracker.Controllers
         private bool CheckDate(DayOfWeek actual, string expected)
         {
             if (string.IsNullOrEmpty(expected)) return false;
-            expected = expected.ToUpper().Replace('Ú', 'U').Replace('Č', 'C').Replace('Á', 'A').Replace('Å','A');
+            expected = expected.ToUpper().Replace('Ú', 'U').Replace('Č', 'C').Replace('Á', 'A').Replace('Å', 'A');
             return actual switch
             {
                 DayOfWeek.Sunday => expected.Equals("NE"),
