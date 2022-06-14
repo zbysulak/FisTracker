@@ -284,7 +284,7 @@ namespace FisTracker.Controllers
 
             // Explicitly use service account credentials by specifying the private key file.
             var builder = new ImageAnnotatorClientBuilder();
-            builder.CredentialsPath = "fis-tracker-333313-6721d1592185.json";
+            builder.CredentialsPath = "fis-tracker-google-cred.json";
             ImageAnnotatorClient client = builder.Build();
 
             IReadOnlyList<EntityAnnotation> textAnnotations = client.DetectText(image1);
