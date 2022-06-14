@@ -43,16 +43,13 @@
             <v-btn outlined color="black darken-1" text @click="dialog = false">
               Close
             </v-btn>
-            <v-btn color="blue darken-1" text @click="authTest">
-              Auth test
-            </v-btn>
             <v-btn color="primary" type="submit"> Log in </v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
     </v-dialog>
-    <v-btn v-else @click="logout" class="mr-10" color="white" outlined Log out>
-      Logout<v-icon>mdi-logout</v-icon>
+    <v-btn v-else @click="logout" icon>
+      <v-icon> mdi-logout </v-icon>
     </v-btn>
   </div>
 </template>
@@ -123,21 +120,6 @@ export default {
     submit() {
       this.$v.$touch()
     },
-
-    authTest() {
-      const url = this.appConfig.apiUrl + "/Test/Auth"
-      this.success = false
-      this.error = null
-      axios
-        .get(url, { headers: { Authorization: this.token } })
-        .then((res) => {
-          console.log("result", res.data)
-        })
-        .catch((err) => {
-          this.error = err.message
-        })
-    },
-
     login() {
       const auth = { name: this.name, password: this.password }
       const url = this.appConfig.apiUrl + "/Users/Login"
@@ -154,6 +136,18 @@ export default {
         })
         .catch((err) => {
           this.error = err.message
+
+          if (err.response.status == 401) {
+            //alert(err.response.data.message)
+            this.$root.snack.show({ message: "Your password is invalid!", color: "error", icon: "mdi-alert-circle-outline" })
+            //console.log(err.response)
+          }
+
+          if (err.response.status == 404) {
+            //alert(err.response.data.message)
+            this.$root.snack.show({ message: "User not found!", color: "error", icon: "mdi-alert-circle-outline" })
+            //console.log(err.response.data.code, 'User not Found')
+          }
         })
     }
   }

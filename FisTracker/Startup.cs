@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
@@ -67,6 +68,20 @@ namespace FisTracker
                          .Requirements.Add(new SimpleAuthorizationRequirement());
                  });
              });
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (ctx) =>
+                {
+                    return new BadRequestObjectResult(new Data.MessageResult()
+                    {
+                        IsError = true,
+                        Message = String.Join(" ", ctx.ModelState
+                        .Where(ms => ms.Value.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)
+                        .Select(inv => String.Join(" ", inv.Value.Errors.Select(e => e.ErrorMessage))))
+                    });
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,6 +106,20 @@ namespace FisTracker
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // UseDefaultFiles & UseStaticFiles have to use same fileProvider!
+            var fileProvider = new PhysicalFileProvider(
+                    System.IO.Path.Combine(env.ContentRootPath, "App"));
+
+            // UseFileServer combines next 2, but also adds unnecessary settings
+            app.UseDefaultFiles(new DefaultFilesOptions()
+            {
+                FileProvider = fileProvider
+            });
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = fileProvider
+            });
 
             app.UseEndpoints(endpoints =>
             {

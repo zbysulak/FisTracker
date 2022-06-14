@@ -1,12 +1,13 @@
 <template>
   <div>
+    <attendance-buttons class="desktop_none" />
     <v-row>
-      <v-col class="pt-0 pb-0" cols="3">
+      <v-col class="pt-0 pb-0 col-xs-12 col-sm-3">
         <month-picker v-model="month" v-on:input="monthChange" />
       </v-col>
     </v-row>
     <v-row class="mt-0">
-      <v-col cols="9">
+      <v-col class="col-sm-9 col-xs-12 mobile_none">
         <v-card-title>Table of attendance</v-card-title>
         <v-data-table
           :headers="headers"
@@ -37,12 +38,12 @@
           </v-row>
         </div>
       </v-col>
-      <v-col cols="3">
+      <v-col class="col-sm-3 col-xs-12 mobile_block">
         <overview-panel
           :time="time"
           :loading="loading"
           class="mb-4"></overview-panel>
-        <image-upload v-on:uploaded="reloadTable"></image-upload>
+        <image-upload class="mobile_none" v-on:uploaded="reloadTable"></image-upload>
       </v-col>
     </v-row>
     <v-overlay :value="overlay">
@@ -56,9 +57,10 @@ import OverviewPanel from "./OverviewPanel.vue"
 import TimeEditDialog from "./TimeEditDialog.vue"
 import MonthPicker from "./MonthPicker.vue"
 import ImageUpload from "./ImageUpload.vue"
+import AttendanceButtons from './AttendanceButtons.vue'
 
 export default {
-  components: { TimeEditDialog, OverviewPanel, MonthPicker, ImageUpload },
+  components: { TimeEditDialog, OverviewPanel, MonthPicker, ImageUpload, AttendanceButtons },
   data: () => ({
     month: new Date().toISOString().substring(0, 7),
     dialog: false,

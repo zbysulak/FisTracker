@@ -2,18 +2,23 @@
   <v-container fluid>
     <v-row class="text-center">
       <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">Welcome {{ userName }}</h1>
+        <h1 class="font-weight-bold mb-3">Welcome {{ userName }}</h1>
 
-        <p class="subheading font-weight-regular">Insert your time manually or upload screenshot of your attendance</p>
+        <p class="subheading font-weight-regular justify-center d-none d-sm-flex">
+          Insert your time manually or upload screenshot of your attendance
+        </p>
+        <p class="subheading font-weight-regular justify-center d-flex d-sm-none">
+          Trck your time at work by simply clicling "IN" button for arrival and "OUT" for departure.
+        </p>
       </v-col>
     </v-row>
-    <v-container v-if="isLogged" fluid>
+    <div v-if="isLogged">
       <v-col cols="12">
         <time-sheet></time-sheet>
       </v-col>
-    </v-container>
-    <v-container class="text-center loginBtn" v-else> 
-      <h4>Please, sign in!</h4> 
+    </div>
+    <v-container class="text-center loginBtn" v-else>
+      <h4>Please, sign in!</h4>
       <login />
       <p class="mt-5 mb-0">or</p>
       <register />
@@ -23,8 +28,8 @@
 
 <script>
 import TimeSheet from "../components/TimeSheet.vue"
-import Login from '../components/Login.vue'
-import Register from '../components/Register.vue'
+import Login from "../components/Login.vue"
+import Register from "../components/Register.vue"
 
 export default {
   name: "Home",
@@ -54,23 +59,20 @@ export default {
       immediate: true // provides initial (not changed yet) state
     }
   },
-  computed: {
-    
-  }
+  computed: {}
 }
 </script>
 
 <style>
 
-  .container {
-    max-width: 90%;
-  }
+.container {
+  max-width: 90%;
+}
 
-  .loginBtn .v-btn {
-    border: 1px solid #1976d2 !important;
-    margin-right: 0 !important;
-    color: #1976d2 !important;
-    margin-top: 20px;
-  }
-
+.loginBtn .v-btn {
+  border: 1px solid #1976d2 !important;
+  margin-right: 0 !important;
+  color: #1976d2 !important;
+  margin-top: 20px;
+}
 </style>

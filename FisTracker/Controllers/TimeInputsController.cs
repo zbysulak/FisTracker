@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Google.Apis.Auth.OAuth2;
+using System.ComponentModel.DataAnnotations;
 
 namespace FisTracker.Controllers
 {
@@ -29,10 +30,10 @@ namespace FisTracker.Controllers
 
         // GET: api/TimeInputs
         [HttpGet]
-        public async Task<ActionResult<TimeSheet>> GetTimeInputs(int month, int year)
+        public async Task<ActionResult<TimeSheet>> GetTimeInputs([Range(1, 12)] int month, int year)
         {
             _logger.LogInformation($"request for timesheet of {month}/{year} from user {this.CurrentUser.UserId}");
-            DateTime d = new DateTime(year, month, 1);
+            DateTime d = new(year, month, 1);
             var times = await _context.TimeInputs.Where(ti =>
                 ti.UserId == this.CurrentUser.UserId &&
                 ti.Date >= d && ti.Date < d.AddMonths(1)
@@ -115,7 +116,7 @@ namespace FisTracker.Controllers
             }
             catch (Exception ex)
             {
-                this._logger.LogError("Failed to process image", ex);
+                this._logger.LogError(ex, "Failed to process image");
                 return StatusCode(500, new MessageResult() { Message = "Failed to process image" });
             }
 
@@ -140,7 +141,7 @@ namespace FisTracker.Controllers
                 };
                 _context.TimeInputs.Add(ti);
             }
-            else if(overwrite)
+            else if (overwrite)
             {
                 ti.HomeOffice = timeInput.HomeOffice;
                 ti.In = Helpers.ParseTimeSpan(timeInput.In);
@@ -155,7 +156,7 @@ namespace FisTracker.Controllers
         private bool CheckDate(DayOfWeek actual, string expected)
         {
             if (string.IsNullOrEmpty(expected)) return false;
-            expected = expected.ToUpper().Replace('Ú', 'U').Replace('Č', 'C').Replace('Á', 'A').Replace('Å','A');
+            expected = expected.ToUpper().Replace('Ú', 'U').Replace('Č', 'C').Replace('Á', 'A').Replace('Å', 'A');
             return actual switch
             {
                 DayOfWeek.Sunday => expected.Equals("NE"),
@@ -283,7 +284,7 @@ namespace FisTracker.Controllers
 
             // Explicitly use service account credentials by specifying the private key file.
             var builder = new ImageAnnotatorClientBuilder();
-            builder.CredentialsPath = "fis-tracker-333313-6721d1592185.json";
+            builder.CredentialsPath = "fis-tracker-google-cred.json";
             ImageAnnotatorClient client = builder.Build();
 
             IReadOnlyList<EntityAnnotation> textAnnotations = client.DetectText(image1);
